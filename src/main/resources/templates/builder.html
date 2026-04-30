@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Конструктор ПК</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.9)),
+            url('/images/bg7.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Segoe UI';
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 20px 40px;
+            border-bottom: 1px solid #222;
+            position: relative;
+            z-index: 1200;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .price-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: black;
+            padding: 10px 30px;
+            border: 1px solid white;
+            border-radius: 10px;
+            z-index: 1200;
+        }
+
+        .builder {
+            position: relative;
+            height: 90vh;
+            z-index: 1;
+        }
+
+        .pc {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .pc img {
+            width: 350px;
+        }
+
+        .part {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 1px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(0,0,0,0.6);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .part:hover {
+            background: white;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        .cpu { top: 10%; left: 48%; transform: translateX(-20%); }
+        .gpu { top: 50%; right: 5%; transform: translateY(-20%); }
+        .ram { bottom: 10%; left: 48%; transform: translateX(-20%); }
+        .mother { top: 40%; left: 5%; transform: translateX(-20%); }
+        .other { bottom: 5%; right: 5%; transform: translateY(-20%); }
+        .psu { top: 13%; left: 10%; transform: translateY(-20%); }
+        .cooling { top: 13%; right: 10%; transform: translateY(-20%); }
+
+        /* overlay */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.28s ease, visibility 0.28s ease;
+            z-index: 100;
+        }
+
+        #overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 350px;
+            height: 100%;
+            background: rgba(17,17,17,0.95);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid #222;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 200;
+            transform: translateX(100%);
+            opacity: 0;
+            visibility: hidden;
+            transition:
+                    transform 0.32s ease,
+                    opacity 0.25s ease,
+                    visibility 0.25s ease;
+        }
+
+        .panel.active {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .close {
+            text-align: right;
+            cursor: pointer;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .build-btn {
+            padding: 14px 40px;
+            border: 1px solid white;
+            color: white;
+            text-decoration: none;
+            background: black;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: 0.4s;
+        }
+
+        .main-build-btn {
+            padding: 22px 70px;
+            font-size: 28px;
+            font-weight: bold;
+            border-radius: 14px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.15);
+        }
+
+        .disabled-btn {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .active-btn:hover {
+            background: linear-gradient(45deg, #8a2be2, #ff1493);
+            border: none;
+            box-shadow: 0 0 15px #ff1493;
+        }
+
+        .card {
+            border: 1px solid #222;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            text-align: center;
+            background: rgba(255,255,255,0.03);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: white;
+            transform: translateY(-3px);
+        }
+
+        .remove-btn {
+            min-width: 90px;
+            text-align: center;
+            padding: 5px 8px;
+            border: 1px solid #ff4d4d;
+            color: #ff4d4d;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: #ff4d4d;
+            color: white;
+        }
+
+        .btn {
+            margin-top: 10px;
+            display: inline-block;
+            padding: 5px 10px;
+            border: 1px solid white;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: white;
+            color: black;
+        }
+
+        .build-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+
+        .build-name {
+            max-width: 250px;
+            font-size: 14px;
+            color: #ddd;
+        }
+
+        .build-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(17,17,17,0.9);
+            padding: 15px;
+            border: 1px solid #222;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            width: 360px;
+            z-index: 20;
+        }
+    </style>
+
+    <script>
+        function openPanel(type) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(type).classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closePanel() {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closePanel();
+            }
+        });
+
+        function chooseAndClose() {
+            closePanel();
+        }
+    </script>
+</head>
+
+<body>
+
+<div id="overlay" onclick="closePanel()"></div>
+
+<div class="header">
+    <a href="/">PC Showroom</a>
+</div>
+
+<div th:if="${editIndex != null}" style="
+    position: fixed;
+    top: 107px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1190;
+    padding: 10px 25px;
+    background: rgba(0,0,0,0.8);
+    border: 1px solid #ff4dd2;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff4dd2;
+    box-shadow: 0 0 15px rgba(255,77,210,0.4);
+">
+    ✏️ Режим редагування збірки #[[${editIndex + 1}]]
+</div>
+
+<div class="price-box">
+    <h3 th:text="'Ціна: ' + (${total} ?: 0) + ' $'"></h3>
+</div>
+
+<div class="builder">
+
+    <div class="part cpu" onclick="openPanel('cpuPanel')">Процесор</div>
+    <div class="part gpu" onclick="openPanel('gpuPanel')">Відеокарта</div>
+    <div class="part ram" onclick="openPanel('ramPanel')">ОЗП</div>
+    <div class="part mother" onclick="openPanel('motherPanel')">Материнка</div>
+    <div class="part other" onclick="openPanel('otherPanel')">Інше</div>
+    <div class="part psu" onclick="openPanel('psuPanel')">Блок живлення</div>
+    <div class="part cooling" onclick="openPanel('coolingPanel')">Охолодження</div>
+
+</div>
+
+<div id="cpuPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Процесори</h3>
+    <div th:each="p : ${cpuList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/cpu/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div id="gpuPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Відеокарти</h3>
+    <div th:each="p : ${gpuList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/gpu/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div id="ramPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Оперативна пам'ять</h3>
+    <div th:each="p : ${ramList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/ram/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div id="motherPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Материнські плати</h3>
+    <div th:each="p : ${motherList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/mother/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div id="psuPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Блоки живлення</h3>
+    <div th:each="p : ${psuList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/psu/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div id="coolingPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Системи охолодження</h3>
+    <div th:each="p : ${coolingList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/cooling/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div id="otherPanel" class="panel">
+    <div class="close" onclick="closePanel()">✖</div>
+    <h3>Інше</h3>
+    <div th:each="p : ${otherList}" class="card">
+        <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
+        <p th:text="${p.name}"></p>
+        <p th:text="${p.price} + ' $'"></p>
+        <a th:href="@{'/builder/add/other/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
+    </div>
+</div>
+
+<div class="build-info">
+
+    <div class="build-row">
+        <div class="build-name">CPU: <span th:text="${build.cpu?.name} ?: '—'"></span></div>
+        <a th:if="${build.cpu != null}" href="/builder/remove/cpu" class="remove-btn">Видалити</a>
+    </div>
+
+    <div class="build-row">
+        <div class="build-name">GPU: <span th:text="${build.gpu?.name} ?: '—'"></span></div>
+        <a th:if="${build.gpu != null}" href="/builder/remove/gpu" class="remove-btn">Видалити</a>
+    </div>
+
+    <div class="build-row">
+        <div class="build-name">RAM: <span th:text="${build.ram?.name} ?: '—'"></span></div>
+        <a th:if="${build.ram != null}" href="/builder/remove/ram" class="remove-btn">Видалити</a>
+    </div>
+
+    <div class="build-row">
+        <div class="build-name">Mother: <span th:text="${build.mother?.name} ?: '—'"></span></div>
+        <a th:if="${build.mother != null}" href="/builder/remove/mother" class="remove-btn">Видалити</a>
+    </div>
+
+    <div class="build-row">
+        <div class="build-name">PSU: <span th:text="${build.psu?.name} ?: '—'"></span></div>
+        <a th:if="${build.psu != null}" href="/builder/remove/psu" class="remove-btn">Видалити</a>
+    </div>
+
+    <div class="build-row">
+        <div class="build-name">Cooling: <span th:text="${build.cooling?.name} ?: '—'"></span></div>
+        <a th:if="${build.cooling != null}" href="/builder/remove/cooling" class="remove-btn">Видалити</a>
+    </div>
+
+    <div class="build-row">
+        <div class="build-name">Other: <span th:text="${build.other?.name} ?: '—'"></span></div>
+        <a th:if="${build.other != null}" href="/builder/remove/other" class="remove-btn">Видалити</a>
+    </div>
+
+</div>
+
+<div style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1200;
+">
+    <a th:href="@{/builder/save}"
+       th:classappend="${build.cpu != null or build.gpu != null or build.ram != null or build.mother != null or build.other != null or build.psu != null or build.cooling != null} ? 'active-btn' : 'disabled-btn'"
+       class="build-btn main-build-btn">
+        Зібрати
+    </a>
+</div>
+
+<div style="
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+">
+    <a href="/builder/new" class="btn">
+        Нова збірка
+    </a>
+</div>
+
+</body>
+</html>

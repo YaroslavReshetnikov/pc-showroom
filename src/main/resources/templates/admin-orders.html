@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Усі замовлення</title>
+
+    <style>
+        body{
+            margin:0;
+            background:#0d0d0d;
+            color:white;
+            font-family:Segoe UI,Arial;
+            padding:30px;
+        }
+
+        h1{
+            text-align:center;
+            color:#ff00cc;
+            margin-bottom:30px;
+        }
+
+        .order{
+            max-width:1000px;
+            margin:0 auto 18px auto;
+            border:1px solid #222;
+            border-radius:12px;
+            overflow:hidden;
+            background:#111;
+        }
+
+        .order-head{
+            padding:18px 22px;
+            cursor:pointer;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            background:#151515;
+            transition:.3s;
+        }
+
+        .order-head:hover{
+            background:#1d1d1d;
+        }
+
+        .left{
+            font-size:20px;
+            font-weight:bold;
+            color:#00ff88;
+        }
+
+        .right{
+            color:#aaa;
+            font-size:14px;
+        }
+
+        .arrow{
+            font-size:20px;
+            transition:.3s;
+        }
+
+        .order.open .arrow{
+            transform:rotate(180deg);
+        }
+
+        .order-body{
+            max-height:0;
+            overflow:hidden;
+            transition:.45s ease;
+            padding:0 22px;
+        }
+
+        .order.open .order-body{
+            max-height:1500px;
+            padding:22px;
+        }
+
+        .line{
+            margin:7px 0;
+            color:#ddd;
+        }
+
+        .summary{
+            white-space:pre-line;
+            background:#0b0b0b;
+            border:1px solid #222;
+            padding:12px;
+            border-radius:8px;
+            margin-top:12px;
+        }
+
+        .status{
+            display:inline-block;
+            margin-top:14px;
+            padding:8px 14px;
+            border-radius:8px;
+            font-weight:bold;
+        }
+
+        .work{
+            color:#ffc107;
+            border:1px solid #ffc107;
+            background:rgba(255,193,7,.08);
+        }
+
+        .done{
+            color:#00ff88;
+            border:1px solid #00ff88;
+            background:rgba(0,255,136,.08);
+        }
+
+        .actions{
+            margin-top:14px;
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+        }
+
+        button{
+            padding:10px 16px;
+            background:none;
+            border:1px solid white;
+            color:white;
+            border-radius:8px;
+            cursor:pointer;
+            transition:.3s;
+        }
+
+        button:hover{
+            background:linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color:transparent;
+        }
+
+        .delete-btn{
+            border:1px solid #ff4d4d;
+            color:#ff4d4d;
+        }
+
+        .delete-btn:hover{
+            background:#ff4d4d;
+            color:white;
+            border-color:#ff4d4d;
+        }
+
+        .empty{
+            text-align:center;
+            color:#777;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Усі замовлення</h1>
+
+<div th:if="${#lists.isEmpty(orders)}" class="empty">
+    Поки що замовлень немає
+</div>
+
+<div th:each="order : ${orders}" class="order">
+
+    <div class="order-head" onclick="toggleOrder(this)">
+        <div class="left">
+            Замовлення #[[${order.id}]]
+        </div>
+
+        <div class="right">
+            [[${order.customerName}]] • [[${order.totalPrice}]] $
+            <span class="arrow">▼</span>
+        </div>
+    </div>
+
+    <div class="order-body">
+
+        <div class="line"><b>Тип:</b> [[${order.orderType}]]</div>
+        <div class="line"><b>Телефон:</b> [[${order.phone}]]</div>
+        <div class="line"><b>Місто:</b> [[${order.city}]]</div>
+        <div class="line"><b>Отримання:</b> [[${order.showroomAddress}]]</div>
+        <div class="line"><b>Коментар:</b> [[${order.comment}]]</div>
+        <div class="line"><b>Дата:</b> [[${order.createdAt}]]</div>
+
+        <div class="summary">[[${order.itemsSummary}]]</div>
+
+        <div th:if="${order.status == 'У роботі'}" class="status work">
+            Статус: У роботі
+        </div>
+
+        <div th:if="${order.status == 'Виконано'}" class="status done">
+            Статус: Виконано
+        </div>
+
+        <div class="actions">
+
+            <form th:if="${order.status != 'Виконано'}"
+                  th:action="@{'/admin/orders/status/' + ${order.id}}"
+                  method="post">
+                <input type="hidden" name="status" value="Виконано">
+                <button type="submit">Позначити як виконано</button>
+            </form>
+
+            <form th:if="${order.status != 'У роботі'}"
+                  th:action="@{'/admin/orders/status/' + ${order.id}}"
+                  method="post">
+                <input type="hidden" name="status" value="У роботі">
+                <button type="submit">Повернути в роботу</button>
+            </form>
+
+            <form th:action="@{'/admin/orders/delete/' + ${order.id}}"
+                  method="post">
+                <button type="submit" class="delete-btn">🗑 Видалити</button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function toggleOrder(el){
+        el.parentElement.classList.toggle("open");
+    }
+</script>
+
+</body>
+</html>

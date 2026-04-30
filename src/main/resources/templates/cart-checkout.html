@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Оформлення замовлення</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                    radial-gradient(circle at top left, rgba(138,43,226,0.12), transparent 28%),
+                    radial-gradient(circle at top right, rgba(255,20,147,0.10), transparent 24%),
+                    linear-gradient(rgba(0,0,0,0.88), rgba(0,0,0,0.97)),
+                    url('/images/bg3.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 32px;
+        }
+
+        .page-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 22px;
+            border: 1px solid rgba(255,255,255,0.8);
+            color: white;
+            text-decoration: none;
+            border-radius: 0;
+            transition: .3s;
+            background: rgba(255,255,255,0.03);
+            letter-spacing: .4px;
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color: transparent;
+            box-shadow: 0 0 18px rgba(255,20,147,0.28);
+            transform: translateY(-2px);
+        }
+
+        .hero-box {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            backdrop-filter: blur(14px);
+            padding: 34px 34px 30px 34px;
+            margin-bottom: 34px;
+            box-shadow:
+                    0 0 0 1px rgba(255,255,255,0.02) inset,
+                    0 25px 60px rgba(0,0,0,0.30);
+        }
+
+        .hero-box::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            pointer-events: none;
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .hero-title {
+            margin: 0;
+            color: #ffffff;
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .hero-subtitle {
+            margin: 10px 0 0 0;
+            color: #cfcfcf;
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 720px;
+        }
+
+        .hero-badge {
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .hero-badge-title {
+            color: #9e9e9e;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            margin-bottom: 8px;
+        }
+
+        .hero-badge-value {
+            color: #ff4dd2;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .form-shell {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            padding: 30px;
+            box-shadow:
+                    0 10px 30px rgba(0,0,0,0.22),
+                    0 0 0 1px rgba(255,255,255,0.02) inset;
+        }
+
+        .form-shell::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+        }
+
+        .section-title {
+            margin: 0 0 22px 0;
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px 22px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #d7d7d7;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 13px 14px;
+            background: rgba(0,0,0,0.28);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            border-radius: 0;
+            box-sizing: border-box;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #ff4dd2;
+            box-shadow: 0 0 0 1px rgba(255,77,210,0.15), 0 0 12px rgba(255,77,210,0.10);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .hint {
+            color: #8d8d8d;
+            font-size: 12px;
+            margin-top: 7px;
+            line-height: 1.5;
+        }
+
+        .delivery-block {
+            margin-top: 8px;
+        }
+
+        .delivery-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .delivery-option {
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .delivery-option:hover {
+            border-color: rgba(255,77,210,0.5);
+            box-shadow: 0 0 18px rgba(255,77,210,0.10);
+            transform: translateY(-2px);
+        }
+
+        .delivery-option input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+            accent-color: #ff4dd2;
+        }
+
+        .delivery-option.active {
+            border-color: #ff4dd2;
+            box-shadow: 0 0 18px rgba(255,77,210,0.14);
+            background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,0,128,0.06));
+        }
+
+        .delivery-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .delivery-logo {
+            width: 62px;
+            height: 62px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.2);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .delivery-title {
+            font-weight: 800;
+            color: white;
+            font-size: 16px;
+        }
+
+        .delivery-desc {
+            color: #aaaaaa;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-top: 4px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 18px;
+            min-width: 170px;
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 0;
+            text-decoration: none;
+            color: white;
+            transition: .3s;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color: transparent;
+            box-shadow: 0 0 14px rgba(255,20,147,0.22);
+        }
+
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 18px;
+            }
+
+            .hero-box,
+            .form-shell {
+                padding: 22px 18px;
+            }
+
+            .hero-title {
+                font-size: 30px;
+            }
+
+            .hero-subtitle {
+                font-size: 15px;
+            }
+
+            .hero-badge {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+
+    <div class="topbar">
+        <a href="/cart" class="back-btn">← Назад до кошика</a>
+    </div>
+
+    <div class="hero-box">
+        <div class="hero-top">
+            <div>
+                <h1 class="hero-title">Оформлення замовлення</h1>
+                <p class="hero-subtitle">
+                    Заповніть контактні дані, оберіть зручний спосіб доставки та підтвердіть замовлення.
+                </p>
+            </div>
+
+            <div class="hero-badge">
+                <div class="hero-badge-title">Підсумок</div>
+                <div class="hero-badge-value" th:text="${total} + ' $'">0 $</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-shell">
+        <h2 class="section-title">Дані для доставки</h2>
+
+        <form action="/cart/checkout" method="post">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="customerName">Ім’я</label>
+                    <input type="text" id="customerName" name="customerName" required
+                           placeholder="Введіть ваше ім'я"
+                           oninput="allowLettersOnly(this)">
+                    <div class="hint">Можна вводити лише букви.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Телефон</label>
+                    <input type="text" id="phone" name="phone" required
+                           placeholder="Наприклад: 380991234567"
+                           maxlength="12"
+                           oninput="allowDigitsOnly(this)">
+                    <div class="hint">Можна вводити лише цифри.</div>
+                </div>
+
+                <div class="form-group full">
+                    <label for="city">Місто</label>
+                    <input list="cities" id="city" name="city" required
+                           placeholder="Оберіть місто або введіть своє">
+                    <datalist id="cities">
+                        <option value="Київ"><option value="Харків"><option value="Одеса"><option value="Дніпро">
+                        <option value="Львів"><option value="Запоріжжя"><option value="Кривий Ріг"><option value="Миколаїв">
+                        <option value="Вінниця"><option value="Полтава"><option value="Чернігів"><option value="Черкаси">
+                        <option value="Хмельницький"><option value="Житомир"><option value="Суми"><option value="Чернівці">
+                        <option value="Рівне"><option value="Івано-Франківськ"><option value="Тернопіль"><option value="Кропивницький">
+                        <option value="Луцьк"><option value="Ужгород"><option value="Біла Церква"><option value="Кременчук">
+                        <option value="Павлоград"><option value="Бровари"><option value="Мукачево"><option value="Дрогобич">
+                        <option value="Ковель"><option value="Ніжин"><option value="Олександрія"><option value="Шостка">
+                        <option value="Конотоп"><option value="Умань"><option value="Ізмаїл"><option value="Прилуки">
+                        <option value="Кам’янець-Подільський"><option value="Бориспіль"><option value="Коломия"><option value="Стрий">
+                        <option value="Самбір"><option value="Червоноград"><option value="Новомосковськ"><option value="Лозова">
+                        <option value="Буча"><option value="Ірпінь"><option value="Фастів"><option value="Обухів">
+                    </datalist>
+                </div>
+
+                <div class="form-group full delivery-block">
+                    <label>Спосіб доставки</label>
+
+                    <div class="delivery-methods">
+                        <label class="delivery-option active" id="npOption">
+                            <div class="delivery-head">
+                                <input type="radio" name="deliveryMethod" value="Нова пошта" checked onchange="updateDeliveryMethod()">
+                                <img src="/images/nova-poshta-logo.jpg" alt="Нова пошта" class="delivery-logo">
+                                <div>
+                                    <div class="delivery-title">Нова пошта</div>
+                                    <div class="delivery-desc">Швидка доставка у відділення або поштомат.</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="delivery-option" id="ukrOption">
+                            <div class="delivery-head">
+                                <input type="radio" name="deliveryMethod" value="Укрпошта" onchange="updateDeliveryMethod()">
+                                <img src="/images/ukrposhta-logo.jpg" alt="Укрпошта" class="delivery-logo">
+                                <div>
+                                    <div class="delivery-title">Укрпошта</div>
+                                    <div class="delivery-desc">Доставка через відділення Укрпошти.</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group full" id="npTypeGroup">
+                    <label for="novaType">Для Нової пошти оберіть тип доставки</label>
+                    <select id="novaType" name="novaType" onchange="updateBranchLabel()">
+                        <option value="Відділення">Відділення</option>
+                        <option value="Поштомат">Поштомат</option>
+                    </select>
+                </div>
+
+                <div class="form-group full">
+                    <label for="branchNumber" id="branchLabel">Адреса / номер відділення Нової пошти</label>
+                    <input type="text" id="branchNumber" name="branchNumber" required
+                           placeholder="Наприклад: відділення №12, вул. Хрещатик, 10">
+                </div>
+
+                <div class="form-group full">
+                    <label for="comment">Коментарі</label>
+                    <textarea id="comment" name="comment" placeholder="Тут можна залишити побажання до замовлення"></textarea>
+                </div>
+
+            </div>
+
+            <div class="buttons">
+                <a href="/cart" class="action-btn">← Назад</a>
+                <button type="submit" class="action-btn">Підтвердити замовлення</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function allowLettersOnly(input) {
+        input.value = input.value.replace(/[^A-Za-zА-Яа-яІіЇїЄєҐґ'’ -]/g, '');
+    }
+
+    function allowDigitsOnly(input) {
+        input.value = input.value.replace(/\D/g, '');
+    }
+
+    function updateBranchLabel() {
+        const delivery = document.querySelector('input[name="deliveryMethod"]:checked').value;
+        const novaType = document.getElementById('novaType');
+        const label = document.getElementById('branchLabel');
+        const branchInput = document.getElementById('branchNumber');
+
+        if (delivery === 'Нова пошта') {
+            const type = novaType.value;
+            label.textContent = 'Адреса / номер ' + type + 'у Нової пошти';
+            branchInput.placeholder = type === 'Поштомат'
+                ? 'Наприклад: Поштомат №245, вул. Центральна, 8'
+                : 'Наприклад: відділення №12, вул. Хрещатик, 10';
+        } else {
+            label.textContent = 'Адреса / номер відділення Укрпошти';
+            branchInput.placeholder = 'Наприклад: відділення №5, вул. Соборна, 14';
+        }
+    }
+
+    function updateDeliveryMethod() {
+        const selected = document.querySelector('input[name="deliveryMethod"]:checked').value;
+        const npOption = document.getElementById('npOption');
+        const ukrOption = document.getElementById('ukrOption');
+        const npTypeGroup = document.getElementById('npTypeGroup');
+
+        npOption.classList.remove('active');
+        ukrOption.classList.remove('active');
+
+        if (selected === 'Нова пошта') {
+            npOption.classList.add('active');
+            npTypeGroup.style.display = 'block';
+        } else {
+            ukrOption.classList.add('active');
+            npTypeGroup.style.display = 'none';
+        }
+
+        updateBranchLabel();
+    }
+
+    updateDeliveryMethod();
+</script>
+
+</body>
+</html>

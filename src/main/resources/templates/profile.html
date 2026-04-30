@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Мій профіль</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body{
+            margin:0;
+            background:
+                    radial-gradient(circle at top left, rgba(138,43,226,0.12), transparent 28%),
+                    radial-gradient(circle at top right, rgba(255,20,147,0.10), transparent 24%),
+                    linear-gradient(rgba(0,0,0,0.88), rgba(0,0,0,0.97)),
+                    url('/images/bg2.jpg');
+            background-size:cover;
+            background-position:center;
+            background-attachment:fixed;
+            color:white;
+            font-family:'Segoe UI', Arial, sans-serif;
+            padding:32px;
+        }
+
+        .page-shell{
+            max-width:1200px;
+            margin:0 auto;
+        }
+
+        .topbar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:20px;
+            margin-bottom:26px;
+        }
+
+        .back-btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            padding:12px 22px;
+            border:1px solid rgba(255,255,255,0.8);
+            color:white;
+            text-decoration:none;
+            border-radius:0;
+            transition:.3s;
+            background:rgba(255,255,255,0.03);
+            letter-spacing:.4px;
+        }
+
+        .back-btn:hover{
+            background:linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color:transparent;
+            box-shadow:0 0 18px rgba(255,20,147,0.28);
+            transform:translateY(-2px);
+        }
+
+        .hero-box{
+            position:relative;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,0.08);
+            background:linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            backdrop-filter:blur(14px);
+            padding:34px 34px 30px 34px;
+            margin-bottom:34px;
+            box-shadow:
+                    0 0 0 1px rgba(255,255,255,0.02) inset,
+                    0 25px 60px rgba(0,0,0,0.30);
+        }
+
+        .hero-box::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            pointer-events:none;
+        }
+
+        .hero-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+
+        .hero-title{
+            margin:0;
+            color:#ffffff;
+            font-size:44px;
+            font-weight:800;
+            letter-spacing:.5px;
+        }
+
+        .hero-subtitle{
+            margin:10px 0 0 0;
+            color:#cfcfcf;
+            font-size:17px;
+            line-height:1.7;
+            max-width:720px;
+        }
+
+        .hero-badge{
+            border:1px solid rgba(255,255,255,0.12);
+            padding:12px 16px;
+            background:rgba(255,255,255,0.03);
+            min-width:180px;
+            text-align:center;
+        }
+
+        .hero-badge-title{
+            color:#9e9e9e;
+            font-size:12px;
+            text-transform:uppercase;
+            letter-spacing:1.6px;
+            margin-bottom:8px;
+        }
+
+        .hero-badge-value{
+            color:#ff4dd2;
+            font-size:24px;
+            font-weight:800;
+        }
+
+        .sections{
+            display:flex;
+            flex-direction:column;
+            gap:42px;
+        }
+
+        .section-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:end;
+            gap:16px;
+            margin-bottom:18px;
+            flex-wrap:wrap;
+        }
+
+        .section-title{
+            margin:0;
+            font-size:30px;
+            font-weight:800;
+            color:#ffffff;
+            letter-spacing:.4px;
+        }
+
+        .section-note{
+            color:#8f8f8f;
+            font-size:14px;
+        }
+
+        .cards-grid{
+            display:grid;
+            grid-template-columns:repeat(2, minmax(0, 1fr));
+            gap:22px;
+        }
+
+        .card{
+            position:relative;
+            background:
+                    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border:1px solid rgba(255,255,255,0.08);
+            padding:24px;
+            border-radius:0;
+            transition:.3s;
+            box-shadow:
+                    0 10px 30px rgba(0,0,0,0.22),
+                    0 0 0 1px rgba(255,255,255,0.02) inset;
+            overflow:hidden;
+        }
+
+        .card::after{
+            content:"";
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:1px;
+            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+        }
+
+        .card:hover{
+            border-color:rgba(255,0,204,0.45);
+            box-shadow:
+                    0 16px 40px rgba(0,0,0,0.30),
+                    0 0 24px rgba(255,0,204,0.10);
+            transform:translateY(-4px);
+        }
+
+        .card-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            gap:16px;
+            margin-bottom:18px;
+        }
+
+        .type{
+            font-size:24px;
+            color:#ffffff;
+            font-weight:800;
+            line-height:1.3;
+        }
+
+        .meta-grid{
+            display:grid;
+            grid-template-columns:repeat(2, minmax(0, 1fr));
+            gap:10px 20px;
+            margin-top:14px;
+        }
+
+        .line{
+            color:#d2d2d2;
+            line-height:1.65;
+            font-size:15px;
+        }
+
+        .label{
+            color:#ffffff;
+            font-weight:700;
+        }
+
+        .specs-box{
+            margin-top:16px;
+            border:1px solid rgba(255,255,255,0.06);
+            background:rgba(255,255,255,0.025);
+            padding:16px;
+        }
+
+        .specs-title{
+            color:#ff4dd2;
+            font-weight:800;
+            font-size:15px;
+            margin-bottom:12px;
+            text-transform:uppercase;
+            letter-spacing:1px;
+        }
+
+        .specs-grid{
+            display:grid;
+            grid-template-columns:repeat(2, minmax(0, 1fr));
+            gap:10px 18px;
+        }
+
+        .summary-title{
+            margin-top:18px;
+            margin-bottom:10px;
+            color:#ff4dd2;
+            font-weight:800;
+            font-size:15px;
+            text-transform:uppercase;
+            letter-spacing:1px;
+        }
+
+        .summary{
+            white-space:pre-line;
+            background:rgba(0,0,0,0.30);
+            border:1px solid rgba(255,255,255,0.06);
+            padding:15px 16px;
+            color:#dddddd;
+            line-height:1.8;
+        }
+
+        .comment{
+            margin-top:14px;
+            padding:14px 16px;
+            background:rgba(255,255,255,0.03);
+            border:1px solid rgba(255,255,255,0.06);
+            color:#ddd;
+            line-height:1.7;
+        }
+
+        .sum{
+            font-size:28px;
+            color:#ffffff;
+            margin-top:20px;
+            font-weight:800;
+            letter-spacing:.3px;
+        }
+
+        .sum span{
+            color:#ff4dd2;
+        }
+
+        .status{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:9px 14px;
+            border-radius:999px;
+            font-weight:700;
+            font-size:13px;
+            letter-spacing:.4px;
+            white-space:nowrap;
+        }
+
+        .status-not-ordered{
+            color:#d7d7d7;
+            border:1px solid rgba(180,180,180,.45);
+            background:rgba(180,180,180,.08);
+        }
+
+        .status-working{
+            color:#ffc107;
+            border:1px solid rgba(255,193,7,.45);
+            background:rgba(255,193,7,.08);
+        }
+
+        .status-done{
+            color:#00ff88;
+            border:1px solid rgba(0,255,136,.42);
+            background:rgba(0,255,136,.08);
+        }
+
+        .profile-actions{
+            margin-top:18px;
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .action-btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+            padding:11px 16px;
+            min-width:150px;
+            border:1px solid rgba(255,255,255,0.8);
+            color:white;
+            text-decoration:none;
+            border-radius:0;
+            transition:.3s;
+            background:transparent;
+            cursor:pointer;
+            font-size:14px;
+        }
+
+        .action-btn:hover{
+            background:linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color:transparent;
+            box-shadow:0 0 14px rgba(255,20,147,0.22);
+        }
+
+        .delete-btn{
+            border:1px solid #ff4d4d;
+            color:#ff7676;
+        }
+
+        .delete-btn:hover{
+            background:#ff4d4d;
+            color:white;
+            border-color:#ff4d4d;
+            box-shadow:none;
+        }
+
+        .empty{
+            text-align:center;
+            color:#8a8a8a;
+            font-style:italic;
+            font-size:18px;
+            padding:34px 20px;
+            border:1px dashed rgba(255,255,255,0.10);
+            background:rgba(255,255,255,0.02);
+        }
+
+        @media(max-width:980px){
+            .cards-grid{
+                grid-template-columns:1fr;
+            }
+
+            .meta-grid,
+            .specs-grid{
+                grid-template-columns:1fr;
+            }
+
+            .hero-title{
+                font-size:34px;
+            }
+        }
+
+        @media(max-width:768px){
+            body{
+                padding:18px;
+            }
+
+            .hero-box{
+                padding:24px 20px;
+            }
+
+            .hero-title{
+                font-size:28px;
+            }
+
+            .section-title{
+                font-size:24px;
+            }
+
+            .card{
+                padding:18px;
+            }
+
+            .type{
+                font-size:21px;
+            }
+
+            .sum{
+                font-size:23px;
+            }
+
+            .topbar{
+                justify-content:center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-shell">
+
+    <div class="topbar">
+        <a href="/" class="back-btn">← На головну</a>
+    </div>
+
+    <div class="hero-box">
+        <div class="hero-top">
+            <div>
+                <h1 class="hero-title">Мій профіль</h1>
+                <p class="hero-subtitle">
+                    Тут зберігаються ваші готові конфігурації, оформлені замовлення на збірки та периферію,
+                    а також поточні статуси виконання.
+                </p>
+            </div>
+
+            <div class="hero-badge">
+                <div class="hero-badge-title">Усього замовлень</div>
+                <div class="hero-badge-value" th:text="${#lists.size(orders)}">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sections">
+
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Мої збережені збірки</h2>
+                <div class="section-note">Чернетки, які ще не оформлені як замовлення</div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(builds)}" class="empty">
+                У вас ще немає збережених збірок.
+            </div>
+
+            <div th:if="${!#lists.isEmpty(builds)}" class="cards-grid">
+                <div th:each="pcBuild, iStat : ${builds}" class="card">
+
+                    <div class="card-top">
+                        <div class="type">Збірка #[[${iStat.index + 1}]]</div>
+
+                        <div th:if="${pcBuild.status == 'Не оформлено'}" class="status status-not-ordered">
+                            ⏺ Не оформлено
+                        </div>
+
+                        <div th:if="${pcBuild.status == 'У роботі'}" class="status status-working">
+                            ◔ У роботі
+                        </div>
+
+                        <div th:if="${pcBuild.status == 'Виконано'}" class="status status-done">
+                            ✔ Виконано
+                        </div>
+                    </div>
+
+                    <div class="specs-box">
+                        <div class="specs-title">Конфігурація</div>
+
+                        <div class="specs-grid">
+                            <div class="line"><span class="label">CPU:</span> [[${pcBuild.cpu} ?: '—']]</div>
+                            <div class="line"><span class="label">GPU:</span> [[${pcBuild.gpu} ?: '—']]</div>
+                            <div class="line"><span class="label">RAM:</span> [[${pcBuild.ram} ?: '—']]</div>
+                            <div class="line"><span class="label">Mother:</span> [[${pcBuild.mother} ?: '—']]</div>
+                            <div class="line"><span class="label">Other:</span> [[${pcBuild.other} ?: '—']]</div>
+                            <div class="line"><span class="label">PSU:</span> [[${pcBuild.psu} ?: '—']]</div>
+                            <div class="line"><span class="label">Cooling:</span> [[${pcBuild.cooling} ?: '—']]</div>
+                        </div>
+                    </div>
+
+                    <div class="sum">
+                        Сума: <span>[[${pcBuild.total}]] $</span>
+                    </div>
+
+                    <div class="profile-actions" th:if="${pcBuild.status == 'Не оформлено'}">
+                        <a th:href="@{'/builder/checkout/' + ${pcBuild.id}}" class="action-btn">
+                            🛒 Оформити
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Мої замовлення</h2>
+                <div class="section-note">Оформлені заявки на збірки ПК та периферію</div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(orders)}" class="empty">
+                У вас ще немає замовлень.
+            </div>
+
+            <div th:if="${!#lists.isEmpty(orders)}" class="cards-grid">
+                <div th:each="order : ${orders}" class="card">
+
+                    <div class="card-top">
+                        <div class="type">
+                            <span th:if="${order.orderType == 'BUILD'}">Замовлення збірки ПК</span>
+                            <span th:if="${order.orderType == 'PERIPHERY'}">Замовлення периферії</span>
+                        </div>
+
+                        <div th:if="${order.status == 'У роботі'}" class="status status-working">
+                            ◔ [[${order.status}]]
+                        </div>
+
+                        <div th:if="${order.status == 'Виконано'}" class="status status-done">
+                            ✔ [[${order.status}]]
+                        </div>
+                    </div>
+
+                    <div class="meta-grid">
+                        <div class="line">
+                            <span class="label">Ім’я:</span>
+                            [[${order.customerName}]]
+                        </div>
+
+                        <div class="line">
+                            <span class="label">Телефон:</span>
+                            [[${order.phone}]]
+                        </div>
+
+                        <div class="line">
+                            <span class="label">Місто:</span>
+                            [[${order.city}]]
+                        </div>
+
+                        <div class="line">
+                            <span class="label">Отримання:</span>
+                            [[${order.showroomAddress}]]
+                        </div>
+
+                        <div class="line">
+                            <span class="label">Дата:</span>
+                            [[${order.createdAt}]]
+                        </div>
+                    </div>
+
+                    <div class="summary-title">
+                        Наповнення замовлення
+                    </div>
+
+                    <div class="summary" th:text="${order.itemsSummary}"></div>
+
+                    <div class="comment"
+                         th:if="${order.comment != null and order.comment != ''}">
+                        <span class="label">Коментар:</span>
+                        <span th:text="${order.comment}"></span>
+                    </div>
+
+                    <div class="sum">
+                        Сума: <span>[[${order.totalPrice}]] $</span>
+                    </div>
+
+                    <div class="profile-actions"
+                         th:if="${order.status == 'Виконано'}">
+                        <form th:action="@{'/profile/delete/' + ${order.id}}"
+                              method="post">
+                            <button type="submit" class="action-btn delete-btn">🗑 Видалити</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+</body>
+</html>

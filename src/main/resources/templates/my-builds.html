@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Мої збірки</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)),
+            url('/images/bgg1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .home-link-container {
+            padding: 30px 40px 10px 40px;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            border: 2px solid #ff00cc;
+            border-radius: 50px;
+            background: transparent;
+            transition: 0.3s all;
+            box-shadow: 0 0 10px rgba(255, 0, 204, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-home:hover {
+            background: #ff00cc;
+            box-shadow: 0 0 25px rgba(255, 0, 204, 0.6);
+            transform: scale(1.05);
+            color: white;
+        }
+
+        .container {
+            padding: 0 40px 40px 40px;
+        }
+
+        .build-card {
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #222;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+
+        .build-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff00cc;
+            box-shadow: 0 0 20px rgba(255,0,200,0.3);
+        }
+
+        .build-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .build-item {
+            color: #ccc;
+            margin: 5px 0;
+            font-size: 15px;
+        }
+
+        .build-price {
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff00cc;
+        }
+
+        .actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid white;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #8a2be2, #ff1493);
+            border-color: transparent;
+            color: white;
+        }
+
+        .delete-btn {
+            border: 1px solid #ff4d4d;
+            color: #ff4d4d;
+        }
+
+        .delete-btn:hover {
+            background: #ff4d4d;
+            color: white;
+            border-color: #ff4d4d;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .status-not-ordered {
+            background: rgba(180,180,180,0.12);
+            border: 1px solid #888;
+            color: #ccc;
+        }
+
+        .status-working {
+            background: rgba(255, 193, 7, 0.12);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+        }
+
+        .status-done {
+            background: rgba(0, 255, 136, 0.12);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="home-link-container">
+    <a href="/" class="btn-home">← На головну</a>
+</div>
+
+<div class="container">
+
+    <h1 style="margin-top: 10px;">Мої збірки</h1>
+
+    <div th:if="${#lists.isEmpty(builds)}" style="color: #666; font-style: italic;">
+        Ви ще не створили жодної збірки.
+    </div>
+
+    <div th:each="pcBuild, iStat : ${builds}" class="build-card">
+
+        <div class="build-title">
+            <span>Збірка #[[${iStat.index + 1}]]</span>
+
+            <div>
+                <span class="status status-not-ordered"
+                      th:if="${pcBuild.status == 'Не оформлено'}">
+                    Не оформлено
+                </span>
+
+                <span class="status status-working"
+                      th:if="${pcBuild.status == 'У роботі'}">
+                    У роботі
+                </span>
+
+                <span class="status status-done"
+                      th:if="${pcBuild.status == 'Виконано'}">
+                    Виконано
+                </span>
+            </div>
+        </div>
+
+        <div class="build-item"><strong>CPU:</strong> [[${pcBuild.cpu} ?: '—']]</div>
+        <div class="build-item"><strong>GPU:</strong> [[${pcBuild.gpu} ?: '—']]</div>
+        <div class="build-item"><strong>RAM:</strong> [[${pcBuild.ram} ?: '—']]</div>
+        <div class="build-item"><strong>Mother:</strong> [[${pcBuild.mother} ?: '—']]</div>
+        <div class="build-item"><strong>Other:</strong> [[${pcBuild.other} ?: '—']]</div>
+        <div class="build-item"><strong>PSU:</strong> [[${pcBuild.psu} ?: '—']]</div>
+        <div class="build-item"><strong>Cooling:</strong> [[${pcBuild.cooling} ?: '—']]</div>
+
+        <div class="build-price">
+            💰 [[${pcBuild.total}]] $
+        </div>
+
+        <div class="actions">
+            <a th:href="@{'/builder/edit/' + ${pcBuild.id}}" class="btn">
+                ✏️ Редагувати
+            </a>
+
+            <a th:if="${pcBuild.status == 'Не оформлено'}"
+               th:href="@{'/builder/checkout/' + ${pcBuild.id}}" class="btn">
+                🛒 Оформити
+            </a>
+
+            <a th:href="@{'/builder/delete/' + ${pcBuild.id}}" class="btn delete-btn">
+                🗑 Видалити
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

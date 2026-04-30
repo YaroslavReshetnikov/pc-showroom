@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>PC Showroom</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: black;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 20px 50px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(0,0,0,0.72);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #222;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .header-left {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .header-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .logo a {
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .profile-btn{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:12px 22px;
+            border:1px solid #ffffff;
+            border-radius:0;
+            background:rgba(255,255,255,0.03);
+            color:white;
+            text-decoration:none;
+            transition:.3s;
+            font-size:15px;
+            min-width:260px;
+            justify-content:center;
+            letter-spacing:.4px;
+        }
+
+        .profile-icon{
+            width:18px;
+            height:18px;
+            object-fit:contain;
+        }
+
+        .profile-btn:hover{
+            background:linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color:transparent;
+            box-shadow:0 0 18px rgba(255,20,147,.35);
+            transform:translateY(-2px);
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+            url('/images/lll1.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+            animation: fadeIn 1.5s ease-in;
+        }
+
+        .hero h1 {
+            font-size: 70px;
+            margin: 0;
+            animation: slideUp 1s ease;
+        }
+
+        .hero p {
+            margin-top: 20px;
+            font-size: 22px;
+            color: #ccc;
+            animation: slideUp 1.5s ease;
+        }
+
+        .btn {
+            margin-top: 20px;
+            padding: 14px 30px;
+            border: 1px solid white;
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 15px white;
+        }
+
+        .showrooms {
+            display: flex;
+            padding: 80px 50px;
+            gap: 50px;
+            align-items: center;
+            background: #0d0d0d;
+        }
+
+        .showrooms-text { flex:1; }
+        .showrooms-img { flex:1; }
+
+        .showrooms-img img {
+            width:100%;
+            border-radius:15px;
+        }
+
+        .why {
+            padding: 80px 40px;
+        }
+
+        .why h2 {
+            text-align:center;
+            font-size:34px;
+            margin-bottom:45px;
+        }
+
+        .why-wrapper {
+            max-width:1400px;
+            margin:auto;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:45px;
+        }
+
+        .why-text-box {
+            width:56%;
+            background: rgba(255,255,255,0.02);
+            border:1px solid #1c1c1c;
+            padding:22px 26px;
+            color:#cfcfcf;
+            font-size:15px;
+            line-height:1.7;
+        }
+
+        .why-image-box {
+            width:42%;
+            text-align:center;
+        }
+
+        .why-image-box img {
+            width:100%;
+            max-width:420px;
+            border:1px solid #222;
+        }
+
+        .footer {
+            text-align:center;
+            padding:25px;
+            border-top:1px solid #222;
+            color:#777;
+            background:#050505;
+        }
+
+        .footer-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:40px;
+            text-align:left;
+        }
+
+        .footer-title {
+            font-size:24px;
+            font-weight:bold;
+            margin-bottom:15px;
+        }
+
+        .footer h3 {
+            color:#ff4dd2;
+            margin-top:0;
+        }
+
+        .footer a {
+            display:block;
+            color:#ccc;
+            text-decoration:none;
+            margin-bottom:10px;
+        }
+
+        .footer-links a {
+            display:inline-block;
+            margin:0 12px;
+        }
+
+        .subscribe-form{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+            margin-top:10px;
+        }
+
+        .subscribe-form input{
+            padding:12px 14px;
+            background:#111;
+            border:1px solid #333;
+            color:white;
+            font-size:14px;
+            outline:none;
+            border-radius:0;
+        }
+
+        .subscribe-form input:focus{
+            border-color:#ff4dd2;
+            box-shadow:0 0 10px rgba(255,77,210,.2);
+        }
+
+        .subscribe-form button{
+            padding:12px;
+            border:1px solid white;
+            background:transparent;
+            color:white;
+            cursor:pointer;
+            transition:.3s;
+            border-radius:0;
+        }
+
+        .subscribe-form button:hover{
+            background:linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color:transparent;
+        }
+
+        .subscribe-success{
+            margin-top:12px;
+            padding:12px 14px;
+            border:1px solid rgba(0,255,136,0.35);
+            background:rgba(0,255,136,0.08);
+            color:#00ff88;
+            font-weight:600;
+        }
+
+        .brands {
+            text-align:center;
+            padding:30px 20px;
+            border-top:1px solid #222;
+            background:#050505;
+        }
+
+        .brands a {
+            display:inline-block;
+            margin:8px 12px;
+            color:#aaa;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        .brands a:hover {
+            color:#ff4dd2;
+        }
+
+        .note-popup {
+            position: fixed;
+            top: 22px;
+            right: 22px;
+            width: 340px;
+            background:
+                    linear-gradient(145deg,
+                    rgba(18,18,18,0.96),
+                    rgba(8,8,8,0.98));
+            color: white;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0;
+            padding: 22px 24px 20px 24px;
+            box-shadow:
+                    0 0 25px rgba(255,20,147,0.16),
+                    0 0 45px rgba(138,43,226,0.10),
+                    0 20px 45px rgba(0,0,0,0.45);
+            z-index: 5000;
+            transition: .35s ease;
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+
+        .note-popup::before{
+            content:"";
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            height:2px;
+            background:linear-gradient(90deg,#8a2be2,#ff1493,#00e5ff);
+        }
+
+        .note-popup.hidden {
+            opacity:0;
+            transform:translateY(-20px) scale(.94);
+            pointer-events:none;
+        }
+
+        .note-popup h3 {
+            margin:0 0 14px 0;
+            font-size:20px;
+            line-height:1.35;
+            color:white;
+            font-weight:700;
+        }
+
+        .note-popup p{
+            margin:0;
+        }
+
+        .note-popup a {
+            color:#ff4dd2;
+            text-decoration:none;
+            font-size:18px;
+            font-weight:700;
+            transition:.3s;
+        }
+
+        .note-popup a:hover {
+            color:#ffffff;
+            text-shadow:
+                    0 0 8px rgba(255,77,210,0.55),
+                    0 0 18px rgba(138,43,226,0.35);
+        }
+
+        .note-close {
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            color:#888;
+            transition:.3s;
+        }
+
+        .note-close:hover{
+            color:#ff4dd2;
+            transform:rotate(90deg);
+        }
+
+        .note-toggle {
+            position: fixed;
+            top: 22px;
+            right: 22px;
+            background: linear-gradient(45deg,#8a2be2,#ff1493);
+            color:white;
+            border:none;
+            padding:12px 18px;
+            cursor:pointer;
+            z-index:4999;
+            font-weight:700;
+            letter-spacing:.4px;
+            box-shadow:0 0 18px rgba(255,20,147,.28);
+            display:none;
+            transition:.3s;
+        }
+
+        .note-toggle:hover{
+            transform:translateY(-2px);
+            box-shadow:0 0 25px rgba(255,20,147,.45);
+        }
+
+        .note-toggle.show {
+            display:block;
+        }
+
+        .page-transition {
+            position:fixed;
+            inset:0;
+            background:black;
+            opacity:0;
+            pointer-events:none;
+            z-index:99999;
+            transition:opacity .45s ease;
+        }
+
+        .page-transition.active {
+            opacity:1;
+            pointer-events:all;
+        }
+
+        @keyframes fadeIn {
+            from {opacity:0;}
+            to {opacity:1;}
+        }
+
+        @keyframes slideUp {
+            from {
+                transform:translateY(50px);
+                opacity:0;
+            }
+            to {
+                transform:translateY(0);
+                opacity:1;
+            }
+        }
+
+        @media(max-width:1100px){
+            .why-wrapper{
+                flex-direction:column;
+            }
+
+            .why-text-box,
+            .why-image-box{
+                width:100%;
+            }
+
+            .header{
+                display:flex;
+                flex-wrap:wrap;
+                gap:15px;
+                justify-content:space-between;
+            }
+
+            .header-center{
+                width:100%;
+                justify-content:center;
+            }
+
+            .profile-btn{
+                min-width:220px;
+            }
+
+            .footer-grid{
+                text-align:center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="notePopup" class="note-popup">
+    <div class="note-close" onclick="closeNote()">✕</div>
+    <h3>Є пропозиції для нас?<br>Напиши нам</h3>
+    <p>
+        <a href="mailto:lusbrast@gmail.com">lusbrast@gmail.com</a>
+    </p>
+</div>
+
+<button id="noteToggle" class="note-toggle" onclick="openNote()">✉ Напиши нам</button>
+
+<div class="header">
+    <div class="header-left">
+        <div class="logo">
+            <a href="/">PC Showroom</a>
+        </div>
+    </div>
+
+    <div class="header-center">
+        <a href="/profile" class="profile-btn">
+            <img src="/images/profile1.jpg" class="profile-icon">
+            <span>Мій профіль / Замовлення</span>
+        </a>
+    </div>
+
+    <div class="header-right"></div>
+</div>
+
+<div class="hero">
+    <h1>Збери свій ідеальний ПК</h1>
+    <p>Потужність. Стиль. Контроль.</p>
+
+    <a href="#" class="btn" onclick="smoothGo('/products');return false;">Перейти в каталог</a>
+    <a href="#" class="btn" onclick="smoothGo('/builder');return false;">Зібрати ПК</a>
+    <a href="#" class="btn" onclick="smoothGo('/periphery');return false;">Замовити периферію</a>
+</div>
+
+<div class="showrooms">
+    <div class="showrooms-text">
+        <h2>ЗАБИРАЙ ЗАМОВЛЕННЯ В ШОУРУМАХ</h2>
+
+        <p>📍 Київ, вул. Хрещатик, 21</p>
+        <p>📍 Київ, вул. Велика Васильківська, 55</p>
+        <p>📍 Київ, просп. Перемоги, 67</p>
+        <p>📍 Київ, вул. Антоновича, 120</p>
+        <p>📍 Київ, вул. Грушевського, 10</p>
+    </div>
+
+    <div class="showrooms-img">
+        <img src="/images/showroom2.jpg">
+    </div>
+</div>
+
+<section class="why">
+    <h2>Чому обирають нас</h2>
+
+    <div class="why-wrapper">
+        <div class="why-text-box">
+            PC Showroom — більше, ніж просто мережа магазинів комп'ютерів та комплектуючих.
+            Це команда професіоналів, які живуть світом електроніки.
+            <br><br>
+            Наші фахівці готові підібрати залізо як за сумісністю, так і за рівнем віддачі.
+            <br><br>
+            Ми розуміємо геймерів і говоримо з ними однією мовою.
+            <br><br>
+            У нас є вигідні рішення для підприємств, фрілансерів та професіоналів.
+        </div>
+
+        <div class="why-image-box">
+            <img src="/images/wh.jpg">
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="footer-grid">
+
+        <div>
+            <div class="footer-title">PC Showroom</div>
+            <p>Твій showroom комплектуючих та ідеальних збірок.</p>
+        </div>
+
+        <div>
+            <h3>Соцмережі</h3>
+            <a href="https://www.instagram.com/lus_brast/" target="_blank">Instagram</a>
+            <a href="https://www.youtube.com/@Lus_Brast" target="_blank">YouTube</a>
+            <a href="https://www.tiktok.com/uk-UA/" target="_blank">TikTok</a>
+        </div>
+
+        <div>
+            <h3>Наші контакти</h3>
+            <p>+380 67 245 18 90</p>
+            <p>+380 95 381 44 27</p>
+            <p>+380 73 512 09 64</p>
+            <p>lusbrast@gmail.com</p>
+        </div>
+
+        <div>
+            <h3>Підписка на бонуси</h3>
+
+            <form class="subscribe-form" action="/subscribe" method="post">
+                <input type="hidden" name="redirectTo" value="/">
+                <input type="email" name="email" placeholder="Введіть вашу пошту" required>
+                <button type="submit">Підписатися</button>
+            </form>
+
+            <div class="subscribe-success" th:if="${subscribed}">
+                ✔ Ви успішно підписались!
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        © 2026 PC Showroom. Усі права захищені.
+
+        <div class="footer-links">
+            <a href="/privacy">Конфіденційність</a>
+            <a href="/declaration">Декларація</a>
+        </div>
+    </div>
+</footer>
+
+<div class="brands">
+    <p>Офіційні представники:</p>
+
+    <a href="https://www.amd.com/" target="_blank">AMD</a>
+    <a href="https://www.asus.com/" target="_blank">ASUS</a>
+    <a href="https://www.gigabyte.com/" target="_blank">Gigabyte</a>
+    <a href="https://hator.gg/" target="_blank">Hator</a>
+    <a href="https://www.intel.com/" target="_blank">Intel</a>
+    <a href="https://www.nvidia.com/" target="_blank">NVIDIA</a>
+    <a href="https://www.razer.com/" target="_blank">Razer</a>
+    <a href="https://www.samsung.com/" target="_blank">Samsung</a>
+</div>
+
+<div id="pageTransition" class="page-transition"></div>
+
+<script>
+    function closeNote(){
+        document.getElementById("notePopup").classList.add("hidden");
+        document.getElementById("noteToggle").classList.add("show");
+    }
+
+    function openNote(){
+        document.getElementById("notePopup").classList.remove("hidden");
+        document.getElementById("noteToggle").classList.remove("show");
+    }
+
+    function smoothGo(url){
+        const overlay=document.getElementById("pageTransition");
+        overlay.classList.add("active");
+
+        setTimeout(()=>{
+            window.location.href=url;
+        },420);
+    }
+</script>
+
+</body>
+</html>

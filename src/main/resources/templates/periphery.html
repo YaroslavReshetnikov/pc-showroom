@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Периферія</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)),
+            url('/images/bg9.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: black;
+            border-bottom: 1px solid #222;
+        }
+
+        .header-inner {
+            width: 100%;
+            max-width: 1400px;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .logo a {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .cart-link a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border: 1px solid #333;
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: #111;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .cart-link a:hover {
+            border-color: #ff4dd2;
+            box-shadow: 0 0 15px rgba(255,77,210,0.35);
+        }
+
+        .cart-link a.cart-active {
+            border-color: #ff4dd2;
+            box-shadow:
+                    0 0 10px rgba(255,77,210,0.45),
+                    0 0 25px rgba(138,43,226,0.25);
+            background: linear-gradient(180deg, #111, #1a0015);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 34px;
+            margin-bottom: 25px;
+        }
+
+        .tools {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .tools input,
+        .tools select {
+            padding: 12px 16px;
+            min-width: 240px;
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .tools input:focus,
+        .tools select:focus {
+            border-color: #ff4dd2;
+            box-shadow: 0 0 15px rgba(255,77,210,0.25);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(15,15,15,0.95);
+            border: 1px solid #222;
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            transition: 0.3s;
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.03);
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #ff4dd2;
+            box-shadow:
+                    0 0 15px rgba(255,77,210,0.22),
+                    0 0 28px rgba(138,43,226,0.16);
+        }
+
+        .image-box {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #222;
+            background: #0b0b0b;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            font-size: 17px;
+            min-height: 72px;
+            margin: 10px 0;
+            line-height: 1.35;
+        }
+
+        .price {
+            font-size: 21px;
+            color: #ff4dd2;
+            font-weight: bold;
+            margin: 10px 0 15px 0;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 6px;
+            padding: 10px 16px;
+            border: 1px solid white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #8a2be2, #ff1493);
+            border-color: transparent;
+            box-shadow: 0 0 14px rgba(255,20,147,0.35);
+        }
+
+        .footer {
+            margin-top: 60px;
+            background: #050505;
+            border-top: 1px solid #222;
+            padding: 50px 40px 25px 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 35px;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            color: #aaa;
+            line-height: 1.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: 0.3s;
+        }
+
+        .footer a:hover {
+            color: #ff4dd2;
+            text-shadow: 0 0 8px rgba(255,77,210,0.35);
+        }
+
+        .footer-input {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .footer-btn {
+            padding: 12px 18px;
+            border: 1px solid white;
+            border-radius: 10px;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .footer-btn:hover {
+            background: linear-gradient(45deg, #8a2be2, #ff1493);
+            border-color: transparent;
+        }
+
+        .success-msg {
+            margin-top: 10px;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .footer-bottom {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-inner {
+                padding: 0 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        <a href="/">PC Showroom</a>
+    </div>
+
+    <div class="cart-link">
+        <a href="/cart"
+           th:classappend="${session.cart != null and !#lists.isEmpty(session.cart)} ? ' cart-active' : ''">
+            🛒 Кошик (<span th:text="${session.cart != null ? #lists.size(session.cart) : 0}">0</span>)
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="title">Замовити периферію</div>
+
+    <div class="tools">
+        <input type="text"
+               id="searchInput"
+               placeholder="Пошук: Logitech, Razer, клавіатура..."
+               onkeyup="filterProducts()">
+
+        <select id="sortSelect" onchange="sortProducts()">
+            <option value="default">Сортувати за ціною</option>
+            <option value="asc">Від дешевших до дорожчих</option>
+            <option value="desc">Від дорожчих до дешевших</option>
+        </select>
+    </div>
+
+    <div class="grid" id="productGrid">
+        <div th:each="product : ${peripheryList}" class="card">
+            <div class="image-box">
+                <img th:src="@{${product.imageUrl}}">
+            </div>
+
+            <h3 th:text="${product.name}"></h3>
+            <div class="price" th:text="${product.price} + ' $'"></div>
+
+            <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+            <a th:href="@{'/cart/add/' + ${product.id}}" class="btn">Додати у кошик</a>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+
+    <div class="footer-grid">
+
+        <div>
+            <div class="footer-title">PC Showroom</div>
+            <div class="footer-text">
+                Найкраща периферія, комплектуючі та збірки ПК для геймерів і професіоналів.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-title">Соцмережі</div>
+            <a href="https://instagram.com/" target="_blank">Instagram</a>
+            <a href="https://youtube.com/" target="_blank">YouTube</a>
+            <a href="https://tiktok.com/" target="_blank">TikTok</a>
+        </div>
+
+        <div>
+            <div class="footer-title">Підписка на бонуси</div>
+
+            <form action="/subscribe" method="post">
+                <input type="hidden" name="redirectTo" value="/periphery">
+
+                <input type="email"
+                       name="email"
+                       class="footer-input"
+                       placeholder="Введіть вашу пошту"
+                       required>
+
+                <button type="submit" class="footer-btn">
+                    Підписатися
+                </button>
+            </form>
+
+            <div th:if="${subscribed}" class="success-msg">
+                ✔ Ви успішно підписались!
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-title">Наші контакти</div>
+
+            <div class="footer-text">
+                +380 67 111 22 33<br>
+                +380 99 444 55 66<br>
+                +380 63 777 88 99<br>
+                lusbrast@gmail.com
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 PC Showroom. Усі права захищені.
+    </div>
+
+</footer>
+
+<script>
+    function filterProducts() {
+        const input = document.getElementById("searchInput").value.toLowerCase();
+        const cards = document.querySelectorAll("#productGrid .card");
+
+        cards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            card.style.display = text.includes(input) ? "block" : "none";
+        });
+    }
+
+    function sortProducts() {
+        const grid = document.getElementById("productGrid");
+        const cards = Array.from(grid.querySelectorAll(".card"));
+        const mode = document.getElementById("sortSelect").value;
+
+        if (mode === "default") {
+            return;
+        }
+
+        cards.sort((a, b) => {
+            const priceA = parseFloat(a.querySelector(".price").textContent.replace("$", "").trim());
+            const priceB = parseFloat(b.querySelector(".price").textContent.replace("$", "").trim());
+
+            return mode === "asc" ? priceA - priceB : priceB - priceA;
+        });
+
+        cards.forEach(card => grid.appendChild(card));
+    }
+</script>
+
+</body>
+</html>

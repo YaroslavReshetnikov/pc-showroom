@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Товар</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.88), rgba(0,0,0,0.96)),
+            url('/images/bg2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .container {
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        .card {
+            display: inline-block;
+            width: 900px;
+            max-width: 95%;
+            padding: 40px;
+            border: 1px solid #222;
+            border-radius: 18px;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 25px rgba(255,0,200,0.08);
+        }
+
+        img {
+            width: 320px;
+            max-width: 100%;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #222;
+        }
+
+        h1 {
+            margin: 10px 0 15px 0;
+            font-size: 34px;
+        }
+
+        .category {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 18px;
+            border-radius: 30px;
+            background: #111;
+            border: 1px solid #333;
+            color: #ccc;
+            font-size: 15px;
+        }
+
+        .description {
+            margin-top: 25px;
+            padding: 25px;
+            text-align: left;
+            background: linear-gradient(180deg, #111, #0b0b0b);
+            border: 1px solid #222;
+            border-radius: 14px;
+            color: #ddd;
+            line-height: 1.9;
+            font-size: 17px;
+            white-space: pre-line;
+        }
+
+        .price {
+            font-size: 30px;
+            margin-top: 25px;
+            color: #ff4dd2;
+            font-weight: bold;
+            text-shadow: 0 0 12px rgba(255,77,210,0.25);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border: 1px solid white;
+            text-decoration: none;
+            color: white;
+            border-radius: 10px;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(45deg, #8a2be2, #ff1493);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 0 15px rgba(255,20,147,0.35);
+            transform: translateY(-2px);
+        }
+
+        .top-back {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .bottom-back {
+            margin-top: 30px;
+        }
+
+        @media (max-width: 700px) {
+            .card {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .description {
+                font-size: 15px;
+                padding: 18px;
+            }
+
+            .price {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+
+        <!-- 🔥 КНОПКА ЗВЕРХУ -->
+        <div class="top-back">
+            <a href="javascript:history.back()" class="btn">← Назад до каталогу</a>
+        </div>
+
+        <img th:src="@{${product.imageUrl}}">
+
+        <h1 th:text="${product.name}"></h1>
+
+        <div class="category"
+             th:text="'Категорія: ' + ${product.category}">
+        </div>
+
+        <div class="description"
+             th:text="${product.description}">
+        </div>
+
+        <div class="price"
+             th:text="${product.price} + ' $'">
+        </div>
+
+        <!-- 🔥 КНОПКА ЗНИЗУ -->
+        <div class="bottom-back">
+            <a href="javascript:history.back()" class="btn">← Назад до каталогу</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

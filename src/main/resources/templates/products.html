@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Каталог</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)),
+            url('/images/bggg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: black;
+            border-bottom: 1px solid #222;
+        }
+
+        .logo a {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo a:hover {
+            color: #aaa;
+        }
+
+        .nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav a:hover {
+            color: #ff4dd2;
+        }
+
+        .container {
+            padding: 40px;
+        }
+
+        .title {
+            display: table;
+            margin: 0 auto 25px auto;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            background: #111;
+            border: 1px solid #222;
+            padding: 14px 34px;
+            border-radius: 0;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(255,0,200,0.08);
+        }
+
+        .title:hover {
+            border-color: #ff00cc;
+            box-shadow:
+                    0 0 18px rgba(255, 0, 200, 0.22),
+                    0 0 28px rgba(138,43,226,0.12);
+        }
+
+        .search-box{
+            text-align:center;
+            margin-bottom:30px;
+        }
+
+        .search-box input{
+            width:420px;
+            max-width:90%;
+            padding:14px 20px;
+            background:#0b0b0b;
+            border:1px solid #333;
+            color:white;
+            font-size:16px;
+            border-radius:12px;
+            outline:none;
+            transition:0.3s;
+        }
+
+        .search-box input:focus{
+            border-color:#ff00cc;
+            box-shadow:0 0 15px rgba(255,0,200,0.35);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .category-column {
+            position: relative;
+            padding: 0 12px;
+        }
+
+        .category-column::after {
+            content: "";
+            position: absolute;
+            top: 10px;
+            right: -10px;
+            width: 8px;
+            height: calc(100% - 20px);
+            background:
+                    linear-gradient(
+                            180deg,
+                            #1a1a1a 0%,
+                            #3d3d3d 15%,
+                            #8f8f8f 35%,
+                            #2f2f2f 55%,
+                            #b9b9b9 70%,
+                            #2a2a2a 100%
+                    );
+            box-shadow:
+                    inset 0 0 3px rgba(255,255,255,0.25),
+                    inset 0 0 8px rgba(0,0,0,0.8),
+                    0 0 8px rgba(255, 0, 204, 0.18);
+        }
+
+        .category-column:last-child::after {
+            display: none;
+        }
+
+        .category-title {
+            background: linear-gradient(180deg, #101010, #000000);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #2a2a2a;
+            margin-bottom: 15px;
+            transition: 0.3s;
+            font-weight: bold;
+            box-shadow: inset 0 0 5px rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .category-title:hover {
+            box-shadow: 0 0 15px #ff00cc;
+            border-color: #ff00cc;
+        }
+
+        .category-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-arrow {
+            color: #ff4dd2;
+            font-size: 14px;
+            min-width: 14px;
+        }
+
+        .sort-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .sort-arrow {
+            cursor: pointer;
+            font-size: 11px;
+            color: #bbb;
+            transition: .3s;
+        }
+
+        .sort-arrow:hover {
+            color: #ff4dd2;
+            transform: scale(1.2);
+        }
+
+        .category-content.hidden {
+            display: none;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(20,20,20,0.95), rgba(8,8,8,0.95));
+            border: 1px solid #222;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-7px) scale(1.02);
+            border-color:#ff00cc;
+            box-shadow:
+                    0 0 15px rgba(255,0,200,0.25),
+                    0 0 30px rgba(138,43,226,0.15);
+        }
+
+        img {
+            width: 100%;
+            max-height: 110px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            font-size: 15px;
+            min-height: 50px;
+            margin: 10px 0;
+        }
+
+        .price {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #ff4dd2;
+            font-weight: bold;
+        }
+
+        .btn {
+            margin-top: 10px;
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid white;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            transition: .3s;
+        }
+
+        .btn:hover{
+            background:linear-gradient(45deg,#8a2be2,#ff1493);
+            transform:translateY(-2px);
+        }
+
+        .footer {
+            margin-top: 60px;
+            background: #050505;
+            border-top: 1px solid #222;
+            padding: 50px 40px 25px 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 35px;
+        }
+
+        .footer-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            color: #aaa;
+            line-height: 1.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+            transition: .3s;
+        }
+
+        .footer a:hover {
+            color: #ff4dd2;
+        }
+
+        .footer-input {
+            width: 100%;
+            padding: 12px;
+            background: #111;
+            border: 1px solid #333;
+            color: white;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .footer-btn {
+            padding: 12px 18px;
+            border: 1px solid white;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: .3s;
+            width: 100%;
+        }
+
+        .footer-btn:hover {
+            background: linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color: transparent;
+        }
+
+        .success-msg{
+            margin-top:10px;
+            color:#00ff88;
+            font-weight:bold;
+        }
+
+        .footer-bottom {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        @media (max-width:1600px){
+            .grid { grid-template-columns: repeat(4,1fr); }
+            .category-column::after { display:none; }
+        }
+
+        @media (max-width:900px){
+            .grid { grid-template-columns: repeat(2,1fr); }
+        }
+
+        @media (max-width:600px){
+            .grid { grid-template-columns:1fr; }
+            .container { padding:20px; }
+            .header { padding:15px 20px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="logo">
+        <a href="/">PC Showroom</a>
+    </div>
+
+    <div class="nav">
+        <a href="/">Головна</a>
+        <a href="/products">Каталог</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="title">Каталог товарів</div>
+
+    <div class="search-box">
+        <input type="text"
+               id="searchInput"
+               placeholder="Пошук: RTX, Intel, ASUS..."
+               onkeyup="searchProducts()">
+    </div>
+
+    <div class="grid">
+
+        <!-- CPU -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left">
+                    <span class="category-arrow">▼</span>
+                    <span>Процесори</span>
+                </div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${cpuList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- GPU -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Відеокарти</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${gpuList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PSU -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Блоки живлення</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${psuList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- COOLING -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Охолодження</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${coolingList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RAM -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Оперативна пам'ять</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${ramList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOTHER -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Материнські плати</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${motherList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERIPHERY -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Периферія</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${peripheryList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- OTHER -->
+        <div class="category-column">
+            <div class="category-title" onclick="toggleCategory(this)">
+                <div class="category-left"><span class="category-arrow">▼</span><span>Інше</span></div>
+                <div class="sort-buttons">
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'asc')">▲</span>
+                    <span class="sort-arrow" onclick="event.stopPropagation();sortCategory(this,'desc')">▼</span>
+                </div>
+            </div>
+            <div class="category-content">
+                <div th:each="product : ${otherList}" class="card">
+                    <img th:src="@{${product.imageUrl}}">
+                    <h3 th:text="${product.name}"></h3>
+                    <div class="price" th:text="${product.price} + ' $'"></div>
+                    <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer class="footer">
+
+    <div class="footer-grid">
+
+        <div>
+            <div class="footer-title">PC Showroom</div>
+            <div class="footer-text">
+                Найкращі комплектуючі, збірки ПК та периферія для геймерів і професіоналів.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-title">Соцмережі</div>
+            <a href="https://instagram.com/" target="_blank">Instagram</a>
+            <a href="https://youtube.com/" target="_blank">YouTube</a>
+            <a href="https://tiktok.com/" target="_blank">TikTok</a>
+        </div>
+
+        <div>
+            <div class="footer-title">Підписка на бонуси</div>
+
+            <form action="/subscribe" method="post">
+                <input type="hidden" name="redirectTo" value="/products">
+
+                <input type="email"
+                       name="email"
+                       class="footer-input"
+                       placeholder="Введіть вашу пошту"
+                       required>
+
+                <button type="submit" class="footer-btn">
+                    Підписатися
+                </button>
+            </form>
+
+            <div th:if="${subscribed}" class="success-msg">
+                ✔ Ви успішно підписались!
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-title">Наші контакти</div>
+
+            <div class="footer-text">
+                +380 67 111 22 33<br>
+                +380 99 444 55 66<br>
+                +380 63 777 88 99<br>
+                lusbrast@gmail.com
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 PC Showroom. Усі права захищені.
+    </div>
+
+</footer>
+
+<script>
+    function searchProducts(){
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll(".card");
+
+        cards.forEach(card=>{
+            let text = card.innerText.toLowerCase();
+            card.style.display = text.includes(input) ? "block" : "none";
+        });
+    }
+
+    function sortCategory(el, direction) {
+        const column = el.closest('.category-column');
+        const content = column.querySelector('.category-content');
+        const cards = Array.from(content.querySelectorAll('.card'));
+
+        cards.sort((a, b) => {
+            const priceA = parseFloat(a.querySelector('.price').textContent.replace('$','').trim());
+            const priceB = parseFloat(b.querySelector('.price').textContent.replace('$','').trim());
+            return direction === 'asc' ? priceA - priceB : priceB - priceA;
+        });
+
+        cards.forEach(card => content.appendChild(card));
+    }
+
+    function toggleCategory(el) {
+        const column = el.closest('.category-column');
+        const content = column.querySelector('.category-content');
+        const arrow = el.querySelector('.category-arrow');
+
+        content.classList.toggle('hidden');
+        arrow.textContent = content.classList.contains('hidden') ? '▶' : '▼';
+    }
+</script>
+
+</body>
+</html>
