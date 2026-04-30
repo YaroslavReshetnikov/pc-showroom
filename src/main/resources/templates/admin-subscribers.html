@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Підписники</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #070707;
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .admin-links {
+            margin-bottom: 30px;
+            color: #aaa;
+        }
+
+        .admin-links a {
+            color: #ff4dd2;
+            text-decoration: none;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .admin-links a:hover {
+            text-decoration: underline;
+        }
+
+        .empty {
+            padding: 25px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #222;
+            border-radius: 14px;
+            color: #aaa;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(15,15,15,0.95);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #222;
+        }
+
+        th, td {
+            padding: 16px;
+            border-bottom: 1px solid #222;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(255,255,255,0.06);
+            color: #ff4dd2;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        td {
+            color: #ddd;
+        }
+
+        tr:hover {
+            background: rgba(255, 77, 210, 0.08);
+        }
+
+        .delete-btn {
+            padding: 8px 14px;
+            border: 1px solid #ff4d4d;
+            background: transparent;
+            color: #ff4d4d;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .delete-btn:hover {
+            background: #ff4d4d;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Підписники на бонуси</h1>
+
+    <div class="admin-links">
+        <a href="/admin/orders">Замовлення</a>
+        <a href="/admin/subscribers">Підписники</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(subscribers)}" class="empty">
+        Поки що немає підписників.
+    </div>
+
+    <table th:if="${not #lists.isEmpty(subscribers)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Дія</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="subscriber : ${subscribers}">
+            <td th:text="${subscriber.id}"></td>
+            <td th:text="${subscriber.email}"></td>
+            <td>
+                <form th:action="@{'/admin/subscribers/delete/' + ${subscriber.id}}" method="post">
+                    <button type="submit" class="delete-btn">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
