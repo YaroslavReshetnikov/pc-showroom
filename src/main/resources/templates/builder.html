@@ -89,7 +89,6 @@
         .psu { top: 13%; left: 10%; transform: translateY(-20%); }
         .cooling { top: 13%; right: 10%; transform: translateY(-20%); }
 
-        /* overlay */
         #overlay {
             position: fixed;
             inset: 0;
@@ -140,6 +139,29 @@
             margin-bottom: 10px;
         }
 
+        .panel-search {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            margin: 10px 0 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(0,0,0,0.55);
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .panel-search::placeholder {
+            color: #aaa;
+        }
+
+        .panel-search:focus {
+            border-color: #ff4dd2;
+            box-shadow: 0 0 12px rgba(255, 77, 210, 0.45);
+        }
+
         .build-btn {
             padding: 14px 40px;
             border: 1px solid white;
@@ -183,6 +205,17 @@
         .card:hover {
             border-color: white;
             transform: translateY(-3px);
+        }
+
+        .no-results {
+            display: none;
+            padding: 15px;
+            margin-top: 10px;
+            text-align: center;
+            color: #aaa;
+            border: 1px dashed #444;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
         }
 
         .remove-btn {
@@ -258,6 +291,30 @@
             document.getElementById('overlay').classList.remove('active');
         }
 
+        function filterPanelProducts(input) {
+            const panel = input.closest('.panel');
+            const searchText = input.value.toLowerCase().trim();
+            const cards = panel.querySelectorAll('.card');
+            const noResults = panel.querySelector('.no-results');
+
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+
+                if (text.includes(searchText)) {
+                    card.style.display = "";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            if (noResults) {
+                noResults.style.display = visibleCount === 0 ? "block" : "none";
+            }
+        }
+
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closePanel();
@@ -315,114 +372,149 @@
 <div id="cpuPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Процесори</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук процесора..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${cpuList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/cpu/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div id="gpuPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Відеокарти</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук відеокарти..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${gpuList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/gpu/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div id="ramPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Оперативна пам'ять</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук ОЗП..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${ramList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/ram/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div id="motherPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Материнські плати</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук материнської плати..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${motherList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/mother/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div id="psuPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Блоки живлення</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук блока живлення..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${psuList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/psu/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div id="coolingPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Системи охолодження</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук охолодження..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${coolingList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/cooling/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div id="otherPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
     <h3>Інше</h3>
+
+    <input type="text" class="panel-search" placeholder="Пошук..." oninput="filterPanelProducts(this)">
+
     <div th:each="p : ${otherList}" class="card">
         <img th:src="@{${p.imageUrl}}" style="width:100%; border-radius:10px; margin-bottom:10px;">
         <p th:text="${p.name}"></p>
         <p th:text="${p.price} + ' $'"></p>
         <a th:href="@{'/builder/add/other/' + ${p.id}}" class="btn" onclick="chooseAndClose()">Обрати</a>
     </div>
+
+    <div class="no-results">Нічого не знайдено</div>
 </div>
 
 <div class="build-info">
 
     <div class="build-row">
-        <div class="build-name">CPU: <span th:text="${build.cpu?.name} ?: '—'"></span></div>
+        <div class="build-name">Процесор: <span th:text="${build.cpu?.name} ?: '—'"></span></div>
         <a th:if="${build.cpu != null}" href="/builder/remove/cpu" class="remove-btn">Видалити</a>
     </div>
 
     <div class="build-row">
-        <div class="build-name">GPU: <span th:text="${build.gpu?.name} ?: '—'"></span></div>
+        <div class="build-name">Відеокарта: <span th:text="${build.gpu?.name} ?: '—'"></span></div>
         <a th:if="${build.gpu != null}" href="/builder/remove/gpu" class="remove-btn">Видалити</a>
     </div>
 
     <div class="build-row">
-        <div class="build-name">RAM: <span th:text="${build.ram?.name} ?: '—'"></span></div>
+        <div class="build-name">Оперативна пам'ять: <span th:text="${build.ram?.name} ?: '—'"></span></div>
         <a th:if="${build.ram != null}" href="/builder/remove/ram" class="remove-btn">Видалити</a>
     </div>
 
     <div class="build-row">
-        <div class="build-name">Mother: <span th:text="${build.mother?.name} ?: '—'"></span></div>
+        <div class="build-name">Материнська плата: <span th:text="${build.mother?.name} ?: '—'"></span></div>
         <a th:if="${build.mother != null}" href="/builder/remove/mother" class="remove-btn">Видалити</a>
     </div>
 
     <div class="build-row">
-        <div class="build-name">PSU: <span th:text="${build.psu?.name} ?: '—'"></span></div>
+        <div class="build-name">Блок живлення: <span th:text="${build.psu?.name} ?: '—'"></span></div>
         <a th:if="${build.psu != null}" href="/builder/remove/psu" class="remove-btn">Видалити</a>
     </div>
 
     <div class="build-row">
-        <div class="build-name">Cooling: <span th:text="${build.cooling?.name} ?: '—'"></span></div>
+        <div class="build-name">Охолодження: <span th:text="${build.cooling?.name} ?: '—'"></span></div>
         <a th:if="${build.cooling != null}" href="/builder/remove/cooling" class="remove-btn">Видалити</a>
     </div>
 
     <div class="build-row">
-        <div class="build-name">Other: <span th:text="${build.other?.name} ?: '—'"></span></div>
+        <div class="build-name">Інше: <span th:text="${build.other?.name} ?: '—'"></span></div>
         <a th:if="${build.other != null}" href="/builder/remove/other" class="remove-btn">Видалити</a>
     </div>
 
