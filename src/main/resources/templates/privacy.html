@@ -2,48 +2,246 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Конфіденційність</title>
+    <title>Конфіденційність | PC Showroom</title>
 
     <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
         body{
-            background:#0d0d0d;
+            font-family:Segoe UI, sans-serif;
             color:white;
-            font-family:Segoe UI;
+            min-height:100vh;
+            background:
+                    linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.88)),
+                    url('/images/privacy-bg.jpg') center/cover no-repeat fixed;
+        }
+
+        /* HEADER */
+        header{
+            width:100%;
+            padding:22px 50px;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            background:rgba(0,0,0,0.55);
+            backdrop-filter:blur(6px);
+        }
+
+        .logo{
+            font-size:34px;
+            font-weight:800;
+            color:white;
+            text-decoration:none;
+        }
+
+        .home-btn{
+            text-decoration:none;
+            color:white;
+            border:1px solid #ff4dd2;
+            padding:12px 24px;
+            transition:0.3s;
+        }
+
+        .home-btn:hover{
+            background:#ff4dd2;
+            box-shadow:0 0 20px #ff4dd2;
+        }
+
+        /* CONTENT */
+        .container{
+            max-width:1100px;
+            margin:auto;
+            padding:70px 30px;
+        }
+
+        .main-box{
+            background:rgba(15,15,15,0.78);
+            border:1px solid rgba(255,255,255,0.08);
+            box-shadow:0 0 25px rgba(255,77,210,0.08);
+            backdrop-filter:blur(8px);
             padding:50px;
         }
-        .container{
-            max-width:900px;
-            margin:auto;
+
+        h1{
+            font-size:52px;
+            margin-bottom:15px;
+            font-weight:900;
         }
-        a{
+
+        .subtitle{
+            color:#cfcfcf;
+            margin-bottom:40px;
+            font-size:18px;
+        }
+
+        .section{
+            margin-bottom:35px;
+        }
+
+        .section h2{
             color:#ff4dd2;
+            font-size:24px;
+            margin-bottom:14px;
+        }
+
+        .section p{
+            color:#e5e5e5;
+            font-size:17px;
+            line-height:1.8;
+            margin-bottom:12px;
+        }
+
+        .highlight{
+            color:#ff4dd2;
+            font-weight:700;
+        }
+
+        .footer-box{
+            margin-top:35px;
+            padding:25px;
+            border:1px solid rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.03);
+        }
+
+        .footer-box p{
+            line-height:1.7;
+        }
+
+        .back-link{
+            display:inline-block;
+            margin-top:25px;
+            text-decoration:none;
+            color:white;
+            border:1px solid white;
+            padding:12px 24px;
+            transition:0.3s;
+        }
+
+        .back-link:hover{
+            background:white;
+            color:black;
+        }
+
+        @media(max-width:768px){
+
+            header{
+                padding:20px;
+                flex-direction:column;
+                gap:15px;
+            }
+
+            .logo{
+                font-size:28px;
+            }
+
+            h1{
+                font-size:38px;
+            }
+
+            .main-box{
+                padding:30px 20px;
+            }
+
+            .section p{
+                font-size:16px;
+            }
+
         }
     </style>
 </head>
 
 <body>
 
+<header>
+    <a href="/" class="logo">PC Showroom</a>
+    <a href="/" class="home-btn">На головну</a>
+</header>
+
 <div class="container">
 
-    <h1>Політика конфіденційності</h1>
+    <div class="main-box">
 
-    <p>
-        Ми поважаємо вашу приватність.
-        PC Showroom не передає особисті дані третім особам.
-    </p>
+        <h1>Політика конфіденційності</h1>
+        <p class="subtitle">
+            Ми цінуємо довіру наших клієнтів та гарантуємо відповідальне
+            використання персональної інформації.
+        </p>
 
-    <p>
-        Інформація, введена при оформленні замовлення,
-        використовується лише для зв'язку з клієнтом та видачі товару.
-    </p>
+        <div class="section">
+            <h2>1. Збір інформації</h2>
+            <p>
+                Під час користування сайтом <span class="highlight">PC Showroom</span>
+                ми можемо отримувати дані, які ви добровільно вводите:
+                ім’я, номер телефону, електронну пошту, адресу доставки
+                та іншу інформацію, необхідну для оформлення замовлення.
+            </p>
+        </div>
 
-    <p>
-        Ми можемо використовувати cookies для покращення роботи сайту.
-    </p>
+        <div class="section">
+            <h2>2. Використання даних</h2>
+            <p>
+                Отримана інформація використовується виключно для:
+            </p>
+            <p>
+                • обробки замовлень;<br>
+                • зв’язку з клієнтом;<br>
+                • уточнення деталей доставки;<br>
+                • покращення якості сервісу;<br>
+                • інформування про бонуси та акції (за згодою користувача).
+            </p>
+        </div>
 
-    <p>
-        <a href="/">← На головну</a>
-    </p>
+        <div class="section">
+            <h2>3. Захист персональних даних</h2>
+            <p>
+                Ми застосовуємо сучасні технічні та організаційні методи
+                захисту даних від несанкціонованого доступу, зміни або втрати.
+                Доступ до інформації мають лише уповноважені особи.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>4. Cookies</h2>
+            <p>
+                Сайт може використовувати cookies для коректної роботи,
+                збереження налаштувань користувача та покращення взаємодії
+                з інтерфейсом.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>5. Передача третім особам</h2>
+            <p>
+                Ми не продаємо та не передаємо персональні дані третім особам,
+                окрім випадків, коли це необхідно для виконання замовлення
+                або передбачено чинним законодавством.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>6. Права користувача</h2>
+            <p>
+                Ви маєте право звернутися до нас щодо зміни, уточнення
+                або видалення ваших персональних даних.
+            </p>
+        </div>
+
+        <div class="footer-box">
+            <p>
+                Використовуючи сайт <span class="highlight">PC Showroom</span>,
+                ви погоджуєтесь з умовами цієї політики конфіденційності.
+                Ми залишаємо за собою право оновлювати її без попереднього повідомлення.
+            </p>
+        </div>
+
+        <a href="/" class="back-link">← Повернутися на головну</a>
+
+    </div>
 
 </div>
 
