@@ -9,7 +9,7 @@ public class Product {
     private String description;
     private String imageUrl;
 
-    // 🔥 ОНОВЛЕНИЙ КОНСТРУКТОР
+
     public Product(Long id, String name, String category,
                    double price, String description, String imageUrl) {
         this.id = id;
@@ -20,7 +20,7 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    // 🔹 GETTERS
+
     public Long getId() {
         return id;
     }

@@ -11,15 +11,15 @@ public class OrderRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String orderType; // BUILD або PERIPHERY
+    private String orderType;
 
     private String customerName;
     private String phone;
     private String city;
 
-    private String deliveryMethod;   // для периферії
-    private String showroomAddress; // для збірки або адреси самовивозу
-    private String branchInfo;      // відділення / поштомат / адреса
+    private String deliveryMethod;
+    private String showroomAddress;
+    private String branchInfo;
 
     @Column(length = 5000)
     private String itemsSummary;
@@ -31,10 +31,10 @@ public class OrderRecord {
 
     private LocalDateTime createdAt;
 
-    /* 🔥 НОВЕ ПОЛЕ СТАТУСУ */
-    private String status; // У роботі / Виконано
 
-    /* 🔥 ДЛЯ ПРИВ'ЯЗКИ ДО ЗБІРКИ */
+    private String status;
+
+
     private Long buildRecordId;
 
     public OrderRecord() {

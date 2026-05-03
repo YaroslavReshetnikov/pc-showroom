@@ -84,7 +84,7 @@ public class ProfileController {
 
         if (order != null && "Виконано".equals(order.getStatus())) {
 
-            // якщо це замовлення збірки — видаляємо і саму збірку
+
             if ("BUILD".equals(order.getOrderType()) && order.getBuildRecordId() != null) {
                 if (buildRecordRepository.existsById(order.getBuildRecordId())) {
                     buildRecordRepository.deleteById(order.getBuildRecordId());
