@@ -16,6 +16,8 @@ public class BuildRecord {
     private String mother;
     private String psu;
     private String cooling;
+
+    @Column(length = 1000)
     private String other;
 
     private Double total;

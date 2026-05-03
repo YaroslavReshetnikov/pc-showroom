@@ -513,9 +513,19 @@
         <a th:if="${build.cooling != null}" href="/builder/remove/cooling" class="remove-btn">Видалити</a>
     </div>
 
-    <div class="build-row">
-        <div class="build-name">Інше: <span th:text="${build.other?.name} ?: '—'"></span></div>
-        <a th:if="${build.other != null}" href="/builder/remove/other" class="remove-btn">Видалити</a>
+    <div class="build-row" th:if="${#lists.isEmpty(build.otherList)}">
+        <div class="build-name">Інше: —</div>
+    </div>
+
+    <div class="build-row" th:each="item, iStat : ${build.otherList}">
+        <div class="build-name">
+            Інше: <span th:text="${item.name}"></span>
+        </div>
+
+        <a th:href="@{'/builder/remove/other/' + ${iStat.index}}"
+           class="remove-btn">
+            Видалити
+        </a>
     </div>
 
 </div>
@@ -528,7 +538,7 @@
     z-index: 1200;
 ">
     <a th:href="@{/builder/save}"
-       th:classappend="${build.cpu != null or build.gpu != null or build.ram != null or build.mother != null or build.other != null or build.psu != null or build.cooling != null} ? 'active-btn' : 'disabled-btn'"
+       th:classappend="${build.cpu != null or build.gpu != null or build.ram != null or build.mother != null or not #lists.isEmpty(build.otherList) or build.psu != null or build.cooling != null} ? 'active-btn' : 'disabled-btn'"
        class="build-btn main-build-btn">
         Зібрати
     </a>

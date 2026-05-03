@@ -201,13 +201,6 @@ public class BuilderController {
                         .ifPresent(copy::setMother);
             }
 
-            if (saved.getOther() != null) {
-                products.stream()
-                        .filter(p -> saved.getOther().equals(p.getName()))
-                        .findFirst()
-                        .ifPresent(copy::setOther);
-            }
-
             if (saved.getPsu() != null) {
                 products.stream()
                         .filter(p -> saved.getPsu().equals(p.getName()))
@@ -220,6 +213,21 @@ public class BuilderController {
                         .filter(p -> saved.getCooling().equals(p.getName()))
                         .findFirst()
                         .ifPresent(copy::setCooling);
+            }
+
+            if (saved.getOther() != null && !saved.getOther().isBlank()) {
+                String[] otherNames = saved.getOther().split(", ");
+
+                for (String otherName : otherNames) {
+                    products.stream()
+                            .filter(p -> otherName.equals(p.getName()))
+                            .findFirst()
+                            .ifPresent(product -> {
+                                if (copy.getOtherList().size() < 3) {
+                                    copy.getOtherList().add(product);
+                                }
+                            });
+                }
             }
 
             session.setAttribute("build", copy);
@@ -255,7 +263,19 @@ public class BuilderController {
         buildRecord.setMother(build.getMother() != null ? build.getMother().getName() : null);
         buildRecord.setPsu(build.getPsu() != null ? build.getPsu().getName() : null);
         buildRecord.setCooling(build.getCooling() != null ? build.getCooling().getName() : null);
-        buildRecord.setOther(build.getOther() != null ? build.getOther().getName() : null);
+
+        if (build.getOtherList() != null && !build.getOtherList().isEmpty()) {
+            String otherItems = build.getOtherList()
+                    .stream()
+                    .map(Product::getName)
+                    .reduce((a, b) -> a + ", " + b)
+                    .orElse(null);
+
+            buildRecord.setOther(otherItems);
+        } else {
+            buildRecord.setOther(null);
+        }
+
         buildRecord.setTotal(total);
 
         buildRecordRepository.save(buildRecord);
@@ -338,9 +358,35 @@ public class BuilderController {
                 case "gpu" -> build.setGpu(selected);
                 case "ram" -> build.setRam(selected);
                 case "mother" -> build.setMother(selected);
-                case "other" -> build.setOther(selected);
                 case "psu" -> build.setPsu(selected);
                 case "cooling" -> build.setCooling(selected);
+
+                case "other" -> {
+                    if (build.getOtherList().size() < 3) {
+                        boolean alreadyAdded = build.getOtherList()
+                                .stream()
+                                .anyMatch(product -> product.getId().equals(selected.getId()));
+
+                        if (!alreadyAdded) {
+                            build.getOtherList().add(selected);
+                        }
+                    }
+                }
+            }
+        }
+
+        return "redirect:/builder";
+    }
+
+    @GetMapping("/remove/other/{index}")
+    public String removeOther(@PathVariable int index,
+                              HttpSession session) {
+
+        Build build = (Build) session.getAttribute("build");
+
+        if (build != null && build.getOtherList() != null) {
+            if (index >= 0 && index < build.getOtherList().size()) {
+                build.getOtherList().remove(index);
             }
         }
 
@@ -362,9 +408,9 @@ public class BuilderController {
             case "gpu" -> build.setGpu(null);
             case "ram" -> build.setRam(null);
             case "mother" -> build.setMother(null);
-            case "other" -> build.setOther(null);
             case "psu" -> build.setPsu(null);
             case "cooling" -> build.setCooling(null);
+            case "other" -> build.getOtherList().clear();
         }
 
         return "redirect:/builder";
@@ -385,9 +431,14 @@ public class BuilderController {
         if (build.getGpu() != null) total += build.getGpu().getPrice();
         if (build.getRam() != null) total += build.getRam().getPrice();
         if (build.getMother() != null) total += build.getMother().getPrice();
-        if (build.getOther() != null) total += build.getOther().getPrice();
         if (build.getPsu() != null) total += build.getPsu().getPrice();
         if (build.getCooling() != null) total += build.getCooling().getPrice();
+
+        if (build.getOtherList() != null) {
+            for (Product product : build.getOtherList()) {
+                total += product.getPrice();
+            }
+        }
 
         return total;
     }
