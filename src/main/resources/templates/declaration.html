@@ -2,46 +2,241 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Декларація</title>
+    <title>Декларація | PC Showroom</title>
 
     <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
         body{
-            background:#0d0d0d;
+            font-family:Segoe UI, sans-serif;
             color:white;
-            font-family:Segoe UI;
+            min-height:100vh;
+            background:
+                    linear-gradient(rgba(0,0,0,0.82), rgba(0,0,0,0.88)),
+                    url('/images/declaration-bg1.jpg') center/cover no-repeat fixed;
+        }
+
+        /* HEADER */
+        header{
+            width:100%;
+            padding:22px 50px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            border-bottom:1px solid rgba(255,255,255,0.08);
+            background:rgba(0,0,0,0.55);
+            backdrop-filter:blur(6px);
+        }
+
+        .logo{
+            text-decoration:none;
+            color:white;
+            font-size:34px;
+            font-weight:800;
+        }
+
+        .home-btn{
+            text-decoration:none;
+            color:white;
+            border:1px solid #ff4dd2;
+            padding:12px 24px;
+            transition:0.3s;
+        }
+
+        .home-btn:hover{
+            background:#ff4dd2;
+            box-shadow:0 0 20px #ff4dd2;
+        }
+
+        /* CONTENT */
+        .container{
+            max-width:1100px;
+            margin:auto;
+            padding:70px 30px;
+        }
+
+        .main-box{
+            background:rgba(15,15,15,0.78);
+            border:1px solid rgba(255,255,255,0.08);
+            box-shadow:0 0 25px rgba(255,77,210,0.08);
+            backdrop-filter:blur(8px);
             padding:50px;
         }
-        .container{
-            max-width:900px;
-            margin:auto;
+
+        h1{
+            font-size:52px;
+            font-weight:900;
+            margin-bottom:15px;
         }
-        a{
+
+        .subtitle{
+            color:#d0d0d0;
+            font-size:18px;
+            margin-bottom:40px;
+        }
+
+        .section{
+            margin-bottom:35px;
+        }
+
+        .section h2{
             color:#ff4dd2;
+            font-size:24px;
+            margin-bottom:14px;
+        }
+
+        .section p{
+            color:#e7e7e7;
+            font-size:17px;
+            line-height:1.8;
+            margin-bottom:12px;
+        }
+
+        .highlight{
+            color:#ff4dd2;
+            font-weight:700;
+        }
+
+        .notice{
+            margin-top:35px;
+            padding:25px;
+            border:1px solid rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.03);
+        }
+
+        .notice p{
+            line-height:1.7;
+        }
+
+        .back-link{
+            display:inline-block;
+            margin-top:25px;
+            text-decoration:none;
+            color:white;
+            border:1px solid white;
+            padding:12px 24px;
+            transition:0.3s;
+        }
+
+        .back-link:hover{
+            background:white;
+            color:black;
+        }
+
+        @media(max-width:768px){
+
+            header{
+                padding:20px;
+                flex-direction:column;
+                gap:15px;
+            }
+
+            .logo{
+                font-size:28px;
+            }
+
+            h1{
+                font-size:38px;
+            }
+
+            .main-box{
+                padding:30px 20px;
+            }
+
+            .section p{
+                font-size:16px;
+            }
+
         }
     </style>
 </head>
 
 <body>
 
+<header>
+    <a href="/" class="logo">PC Showroom</a>
+    <a href="/" class="home-btn">На головну</a>
+</header>
+
 <div class="container">
 
-    <h1>Декларація</h1>
+    <div class="main-box">
 
-    <p>
-        PC Showroom є демонстраційним онлайн-магазином комп’ютерної техніки.
-    </p>
+        <h1>Декларація</h1>
 
-    <p>
-        Усі назви брендів використовуються виключно в інформаційних цілях.
-    </p>
+        <p class="subtitle">
+            Офіційна інформація щодо призначення сайту, використання матеріалів
+            та умов розміщення контенту.
+        </p>
 
-    <p>
-        Сайт може містити тестові товари, приклади цін та умовні дані.
-    </p>
+        <div class="section">
+            <h2>1. Призначення сайту</h2>
+            <p>
+                <span class="highlight">PC Showroom</span> є демонстраційним
+                вебпроєктом у сфері продажу комп’ютерної техніки, комплектуючих
+                та периферійних пристроїв.
+            </p>
+        </div>
 
-    <p>
-        <a href="/">← На головну</a>
-    </p>
+        <div class="section">
+            <h2>2. Інформаційний характер</h2>
+            <p>
+                Матеріали, розміщені на сайті, створені з ознайомчою метою
+                та можуть використовуватися для демонстрації функціоналу
+                інтернет-магазину, структури каталогу та системи оформлення замовлень.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>3. Бренди та торгові марки</h2>
+            <p>
+                Усі назви брендів, логотипи та найменування товарів належать
+                їхнім законним власникам та використовуються виключно
+                в інформаційних цілях.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>4. Тестові дані</h2>
+            <p>
+                Сайт може містити умовні товари, приклади характеристик,
+                тестові ціни, демонстраційні замовлення та інші навчальні дані,
+                що не є публічною офертою.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>5. Відповідальність</h2>
+            <p>
+                Адміністрація сайту не несе відповідальності за використання
+                інформації з демонстраційного ресурсу в комерційних цілях
+                без додаткової перевірки її актуальності.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>6. Оновлення інформації</h2>
+            <p>
+                Вміст сайту може змінюватися, доповнюватися або видалятися
+                без попереднього повідомлення користувачів.
+            </p>
+        </div>
+
+        <div class="notice">
+            <p>
+                Використовуючи сайт <span class="highlight">PC Showroom</span>,
+                користувач підтверджує ознайомлення з цією декларацією
+                та погоджується з її умовами.
+            </p>
+        </div>
+
+        <a href="/" class="back-link">← Повернутися на головну</a>
+
+    </div>
 
 </div>
 
