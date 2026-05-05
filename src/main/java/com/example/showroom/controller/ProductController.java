@@ -1331,7 +1331,7 @@ public class ProductController {
     }
 
 
-    // 🔥 СТОРІНКА ОДНОГО ТОВАРУ
+
     @GetMapping("/product/{id}")
     public String getProductById(@PathVariable Long id, Model model) {
 
