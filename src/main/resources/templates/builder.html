@@ -48,17 +48,6 @@
             z-index: 1;
         }
 
-        .pc {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .pc img {
-            width: 350px;
-        }
-
         .part {
             position: absolute;
             width: 140px;
@@ -79,6 +68,15 @@
             background: white;
             color: black;
             transform: scale(1.1);
+        }
+
+        .part.selected {
+            background: linear-gradient(135deg, #8a2be2, #ff1493);
+            border-color: #ff4dd2;
+            color: white;
+            box-shadow:
+                    0 0 15px rgba(255, 77, 210, 0.8),
+                    0 0 35px rgba(138, 43, 226, 0.6);
         }
 
         .cpu { top: 10%; left: 48%; transform: translateX(-20%); }
@@ -120,10 +118,7 @@
             transform: translateX(100%);
             opacity: 0;
             visibility: hidden;
-            transition:
-                    transform 0.32s ease,
-                    opacity 0.25s ease,
-                    visibility 0.25s ease;
+            transition: transform 0.32s ease, opacity 0.25s ease, visibility 0.25s ease;
         }
 
         .panel.active {
@@ -277,6 +272,77 @@
             width: 360px;
             z-index: 20;
         }
+
+        .help-btn {
+            position: fixed;
+            top: 22px;
+            right: 35px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid #ff4dd2;
+            background: rgba(0,0,0,0.75);
+            color: #ff4dd2;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1300;
+            box-shadow: 0 0 15px rgba(255,77,210,0.5);
+            transition: 0.3s;
+        }
+
+        .help-btn:hover {
+            background: #ff4dd2;
+            color: white;
+            box-shadow: 0 0 25px #ff4dd2;
+        }
+
+        .help-modal {
+            position: fixed;
+            top: 85px;
+            right: 35px;
+            width: 380px;
+            background: rgba(15,15,15,0.97);
+            border: 1px solid #ff4dd2;
+            border-radius: 16px;
+            padding: 20px;
+            z-index: 1400;
+            box-shadow: 0 0 35px rgba(255,77,210,0.35);
+            display: none;
+        }
+
+        .help-modal.active {
+            display: block;
+        }
+
+        .help-modal h3 {
+            margin-top: 0;
+            color: #ff4dd2;
+        }
+
+        .help-modal p {
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .help-modal img {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 12px;
+            border: 1px solid #333;
+        }
+
+        .help-close {
+            float: right;
+            cursor: pointer;
+            color: #aaa;
+            font-size: 20px;
+        }
+
+        .help-close:hover {
+            color: white;
+        }
     </style>
 
     <script>
@@ -315,9 +381,18 @@
             }
         }
 
+        function toggleHelp() {
+            document.getElementById('helpModal').classList.toggle('active');
+        }
+
+        function closeHelp() {
+            document.getElementById('helpModal').classList.remove('active');
+        }
+
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closePanel();
+                closeHelp();
             }
         });
 
@@ -330,6 +405,26 @@
 <body>
 
 <div id="overlay" onclick="closePanel()"></div>
+
+<button class="help-btn" onclick="toggleHelp()">!</button>
+
+<div id="helpModal" class="help-modal">
+    <span class="help-close" onclick="closeHelp()">✖</span>
+
+    <h3>Допомога по конструктору</h3>
+
+    <p>
+        Натисніть на потрібну категорію комплектуючих, оберіть товар зі списку,
+        після чого система автоматично додасть його до збірки та перерахує загальну ціну.
+    </p>
+
+    <p>
+        Коли всі потрібні компоненти обрані, натисніть кнопку <b>«Зібрати»</b>,
+        щоб зберегти конфігурацію ПК.
+    </p>
+
+    <img src="/images/help-builder.gif" alt="Допомога по конструктору">
+</div>
 
 <div class="header">
     <a href="/">PC Showroom</a>
@@ -359,13 +454,33 @@
 
 <div class="builder">
 
-    <div class="part cpu" onclick="openPanel('cpuPanel')">Процесор</div>
-    <div class="part gpu" onclick="openPanel('gpuPanel')">Відеокарта</div>
-    <div class="part ram" onclick="openPanel('ramPanel')">ОЗП</div>
-    <div class="part mother" onclick="openPanel('motherPanel')">Материнка</div>
-    <div class="part other" onclick="openPanel('otherPanel')">Інше</div>
-    <div class="part psu" onclick="openPanel('psuPanel')">Блок живлення</div>
-    <div class="part cooling" onclick="openPanel('coolingPanel')">Охолодження</div>
+    <div class="part cpu"
+         th:classappend="${build.cpu != null} ? 'selected' : ''"
+         onclick="openPanel('cpuPanel')">Процесор</div>
+
+    <div class="part gpu"
+         th:classappend="${build.gpu != null} ? 'selected' : ''"
+         onclick="openPanel('gpuPanel')">Відеокарта</div>
+
+    <div class="part ram"
+         th:classappend="${build.ram != null} ? 'selected' : ''"
+         onclick="openPanel('ramPanel')">ОЗП</div>
+
+    <div class="part mother"
+         th:classappend="${build.mother != null} ? 'selected' : ''"
+         onclick="openPanel('motherPanel')">Материнка</div>
+
+    <div class="part other"
+         th:classappend="${not #lists.isEmpty(build.otherList)} ? 'selected' : ''"
+         onclick="openPanel('otherPanel')">Інше</div>
+
+    <div class="part psu"
+         th:classappend="${build.psu != null} ? 'selected' : ''"
+         onclick="openPanel('psuPanel')">Блок живлення</div>
+
+    <div class="part cooling"
+         th:classappend="${build.cooling != null} ? 'selected' : ''"
+         onclick="openPanel('coolingPanel')">Охолодження</div>
 
 </div>
 
