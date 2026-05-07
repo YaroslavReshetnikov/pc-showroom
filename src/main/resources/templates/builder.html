@@ -444,7 +444,7 @@
             const btn = document.getElementById('helpBtn');
             const backdrop = document.getElementById('helpBackdrop');
 
-            localStorage.setItem('builderHelpClicked', 'true');
+            sessionStorage.setItem('builderHelpClicked', 'true');
             btn.classList.add('clicked');
 
             const isOpen = modal.classList.contains('active');
@@ -480,10 +480,11 @@
             closePanel();
         }
 
+        localStorage.removeItem('builderHelpClicked');
         document.addEventListener('DOMContentLoaded', function() {
             const btn = document.getElementById('helpBtn');
 
-            if (localStorage.getItem('builderHelpClicked') === 'true') {
+            if (sessionStorage.getItem('builderHelpClicked') === 'true') {
                 btn.classList.add('clicked');
             }
         });
