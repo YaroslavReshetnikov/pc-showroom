@@ -444,6 +444,7 @@
             const btn = document.getElementById('helpBtn');
             const backdrop = document.getElementById('helpBackdrop');
 
+            localStorage.setItem('builderHelpClicked', 'true');
             btn.classList.add('clicked');
 
             const isOpen = modal.classList.contains('active');
@@ -478,6 +479,15 @@
         function chooseAndClose() {
             closePanel();
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('helpBtn');
+
+            if (localStorage.getItem('builderHelpClicked') === 'true') {
+                btn.classList.add('clicked');
+            }
+        });
+
     </script>
 </head>
 
