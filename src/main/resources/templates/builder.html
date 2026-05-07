@@ -277,47 +277,43 @@
             position: fixed;
             top: 11px;
             right: 63px;
-
             width: 55px;
             height: 55px;
-
             border-radius: 50%;
             border: 2px solid #ff4dd2;
-
             background: rgba(0,0,0,0.85);
             color: #ff4dd2;
-
             font-size: 30px;
             font-weight: bold;
-
             cursor: pointer;
             z-index: 1300;
-
             box-shadow:
                     0 0 15px rgba(255,77,210,0.5),
                     0 0 30px rgba(255,77,210,0.3);
-
             transition: 0.3s;
-
             animation: pulseHelp 2s infinite;
         }
 
         .help-btn:hover {
             background: #ff4dd2;
             color: white;
-
             transform: scale(1.12);
-
             box-shadow:
                     0 0 25px #ff4dd2,
                     0 0 50px rgba(255,77,210,0.8);
         }
 
-        @keyframes pulseHelp {
+        .help-btn.opened {
+            animation: none;
+            background: #ff4dd2;
+            color: white;
+            box-shadow: none;
+            transform: scale(1);
+        }
 
+        @keyframes pulseHelp {
             0% {
                 transform: scale(1);
-
                 box-shadow:
                         0 0 10px rgba(255,77,210,0.5),
                         0 0 20px rgba(255,77,210,0.3);
@@ -325,7 +321,6 @@
 
             50% {
                 transform: scale(1.15);
-
                 box-shadow:
                         0 0 25px rgba(255,77,210,0.9),
                         0 0 50px rgba(255,77,210,0.7),
@@ -334,11 +329,23 @@
 
             100% {
                 transform: scale(1);
-
                 box-shadow:
                         0 0 10px rgba(255,77,210,0.5),
                         0 0 20px rgba(255,77,210,0.3);
             }
+        }
+
+        .help-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(2px);
+            z-index: 1350;
+            display: none;
+        }
+
+        .help-backdrop.active {
+            display: block;
         }
 
         .help-modal {
@@ -391,6 +398,7 @@
 
     <script>
         function openPanel(type) {
+            closeHelp();
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.getElementById(type).classList.add('active');
             document.getElementById('overlay').classList.add('active');
@@ -426,11 +434,30 @@
         }
 
         function toggleHelp() {
-            document.getElementById('helpModal').classList.toggle('active');
+            const modal = document.getElementById('helpModal');
+            const btn = document.getElementById('helpBtn');
+            const backdrop = document.getElementById('helpBackdrop');
+
+            const isOpen = modal.classList.contains('active');
+
+            if (isOpen) {
+                closeHelp();
+            } else {
+                closePanel();
+                modal.classList.add('active');
+                btn.classList.add('opened');
+                backdrop.classList.add('active');
+            }
         }
 
         function closeHelp() {
-            document.getElementById('helpModal').classList.remove('active');
+            const modal = document.getElementById('helpModal');
+            const btn = document.getElementById('helpBtn');
+            const backdrop = document.getElementById('helpBackdrop');
+
+            if (modal) modal.classList.remove('active');
+            if (btn) btn.classList.remove('opened');
+            if (backdrop) backdrop.classList.remove('active');
         }
 
         document.addEventListener('keydown', function(event) {
@@ -450,7 +477,9 @@
 
 <div id="overlay" onclick="closePanel()"></div>
 
-<button class="help-btn" onclick="toggleHelp()">!</button>
+<button id="helpBtn" class="help-btn" onclick="toggleHelp()">!</button>
+
+<div id="helpBackdrop" class="help-backdrop" onclick="closeHelp()"></div>
 
 <div id="helpModal" class="help-modal">
     <span class="help-close" onclick="closeHelp()">✖</span>
@@ -527,6 +556,8 @@
          onclick="openPanel('coolingPanel')">Охолодження</div>
 
 </div>
+
+
 
 <div id="cpuPanel" class="panel">
     <div class="close" onclick="closePanel()">✖</div>
