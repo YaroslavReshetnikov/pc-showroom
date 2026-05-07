@@ -495,8 +495,19 @@
                     </div>
 
                     <div class="profile-actions" th:if="${pcBuild.status == 'Не оформлено'}">
+
                         <a th:href="@{'/builder/checkout/' + ${pcBuild.id}}" class="action-btn">
                             🛒 Оформити
+                        </a>
+
+                        <a th:href="@{'/builder/edit/' + ${pcBuild.id}}" class="action-btn">
+                            ✏️ Змінити
+                        </a>
+
+                        <a th:href="@{'/builder/delete/' + ${pcBuild.id}}"
+                           class="action-btn delete-btn"
+                           onclick="return confirm('Ви точно хочете видалити цю збірку?')">
+                            🗑 Видалити
                         </a>
                     </div>
                 </div>
