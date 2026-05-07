@@ -391,6 +391,11 @@
             font-size: 20px;
         }
 
+        .help-btn.clicked {
+            animation: none;
+            box-shadow: none;
+        }
+
         .help-close:hover {
             color: white;
         }
@@ -437,6 +442,8 @@
             const modal = document.getElementById('helpModal');
             const btn = document.getElementById('helpBtn');
             const backdrop = document.getElementById('helpBackdrop');
+
+            btn.classList.add('clicked');
 
             const isOpen = modal.classList.contains('active');
 
