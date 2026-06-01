@@ -58,8 +58,6 @@
             background: #111;
             border: 1px solid #222;
             padding: 14px 34px;
-            border-radius: 0;
-            transition: 0.3s;
             box-shadow: 0 0 15px rgba(255,0,200,0.08);
         }
 
@@ -112,20 +110,8 @@
             right: -10px;
             width: 8px;
             height: calc(100% - 20px);
-            background:
-                    linear-gradient(
-                            180deg,
-                            #1a1a1a 0%,
-                            #3d3d3d 15%,
-                            #8f8f8f 35%,
-                            #2f2f2f 55%,
-                            #b9b9b9 70%,
-                            #2a2a2a 100%
-                    );
-            box-shadow:
-                    inset 0 0 3px rgba(255,255,255,0.25),
-                    inset 0 0 8px rgba(0,0,0,0.8),
-                    0 0 8px rgba(255, 0, 204, 0.18);
+            background: linear-gradient(180deg,#1a1a1a,#8f8f8f,#2a2a2a);
+            box-shadow: 0 0 8px rgba(255, 0, 204, 0.18);
         }
 
         .category-column:last-child::after {
@@ -140,7 +126,6 @@
             margin-bottom: 15px;
             transition: 0.3s;
             font-weight: bold;
-            box-shadow: inset 0 0 5px rgba(255,255,255,0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -239,6 +224,26 @@
         .btn:hover{
             background:linear-gradient(45deg,#8a2be2,#ff1493);
             transform:translateY(-2px);
+        }
+
+        .more-btn {
+            display: none;
+            width: 100%;
+            margin: 5px 0 25px 0;
+            padding: 11px 14px;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            border: 1px solid #ff4dd2;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .more-btn:hover {
+            background: linear-gradient(45deg,#8a2be2,#ff1493);
+            border-color: transparent;
+            box-shadow: 0 0 15px rgba(255,77,210,0.5);
         }
 
         .footer {
@@ -379,6 +384,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -398,6 +404,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -417,6 +424,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -436,6 +444,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -455,6 +464,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -474,6 +484,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -493,6 +504,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -512,6 +524,7 @@
                     <div class="price" th:text="${product.price} + ' $'"></div>
                     <a th:href="@{'/product/' + ${product.id}}" class="btn">Детальніше</a>
                 </div>
+                <button type="button" class="more-btn" onclick="toggleMore(this)">Показати ще ↓</button>
             </div>
         </div>
 
@@ -578,19 +591,62 @@
 </footer>
 
 <script>
-    function searchProducts(){
-        let input = document.getElementById("searchInput").value.toLowerCase();
-        let cards = document.querySelectorAll(".card");
+    const PRODUCT_LIMIT = 5;
 
-        cards.forEach(card=>{
-            let text = card.innerText.toLowerCase();
-            card.style.display = text.includes(input) ? "block" : "none";
+    document.addEventListener("DOMContentLoaded", function () {
+        setupShowMore();
+    });
+
+    function setupShowMore() {
+        document.querySelectorAll(".category-content").forEach(content => {
+            content.dataset.expanded = "false";
+            applyCategoryLimit(content);
+        });
+    }
+
+    function applyCategoryLimit(content) {
+        const cards = Array.from(content.querySelectorAll(".card"));
+        const btn = content.querySelector(".more-btn");
+        const searchValue = document.getElementById("searchInput").value.toLowerCase().trim();
+        const expanded = content.dataset.expanded === "true";
+
+        let visibleCards = cards.filter(card => {
+            const text = card.innerText.toLowerCase();
+            return searchValue === "" || text.includes(searchValue);
+        });
+
+        cards.forEach(card => card.style.display = "none");
+
+        visibleCards.forEach((card, index) => {
+            if (expanded || index < PRODUCT_LIMIT || searchValue !== "") {
+                card.style.display = "block";
+            }
+        });
+
+        if (visibleCards.length > PRODUCT_LIMIT && searchValue === "") {
+            btn.style.display = "block";
+            btn.textContent = expanded ? "Згорнути ↑" : "Показати ще ↓";
+        } else {
+            btn.style.display = "none";
+        }
+    }
+
+    function toggleMore(btn) {
+        const content = btn.closest(".category-content");
+        content.dataset.expanded = content.dataset.expanded === "true" ? "false" : "true";
+        applyCategoryLimit(content);
+    }
+
+    function searchProducts(){
+        document.querySelectorAll(".category-content").forEach(content => {
+            applyCategoryLimit(content);
         });
     }
 
     function sortCategory(el, direction) {
         const column = el.closest('.category-column');
         const content = column.querySelector('.category-content');
+        const btn = content.querySelector('.more-btn');
         const cards = Array.from(content.querySelectorAll('.card'));
 
         cards.sort((a, b) => {
@@ -599,7 +655,10 @@
             return direction === 'asc' ? priceA - priceB : priceB - priceA;
         });
 
-        cards.forEach(card => content.appendChild(card));
+        cards.forEach(card => content.insertBefore(card, btn));
+
+        content.dataset.expanded = "false";
+        applyCategoryLimit(content);
     }
 
     function toggleCategory(el) {
